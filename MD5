@@ -1,9 +1,10 @@
-62a18cdb1262669956d032495245af5b *DESCRIPTION
+18020ab37d1c8da449581234d66bdfed *CHANGE
+0beefd416d490606d3b7a41f5a4c4fcb *DESCRIPTION
 8c5bb9c3f050d243721ce83fc81cb630 *NAMESPACE
 fafaa43183333ba3834330e137fd2eed *R/centrality.R
 94486df783d31df803f34d91d25eadd5 *R/cepa.R
 5ba265f2f0f243d3e9ecf97f99f31178 *R/cepa.all.R
-50cf2d008cd37eb8f5ee4fd50f3d7407 *R/generate.pathway.R
+0f77ae5a27dfa6877204b0e8a92fa280 *R/generate.pathway.R
 08d5a22ea83a3f43ad3273f6b6eae4cb *R/get.cepa.R
 320bdba018b3a31645ceab33abca5cb1 *R/p.table.R
 28faa86f924a85d0e6088631f1373511 *R/pathway.nodes.R
@@ -15,7 +16,7 @@ fcfca8b4a2ec088845abaa97ddbdc83a *R/report.R
 48737e9e86c968aeff1ff1bfe464b3c3 *data/PID.db.rda
 6985141e168a86b8836bcc2017f3be49 *data/gene.list.rda
 8e47ac9192112db49a150cf3cd664337 *inst/doc/CePa.Rnw
-7c95ed068b4eb5a605263050be5583bd *inst/doc/CePa.pdf
+6b59ea86d311a3038378ab9c48a6becf *inst/doc/CePa.pdf
 855570b46c6e33ef17042ffef5ae7541 *inst/extdata/cepa.template
 ac8ef594407c5a214cff9477f2eea3fa *man/CePa-package.Rd
 ea92ea4885089d8f789b3e7635527b62 *man/PID.db.Rd
