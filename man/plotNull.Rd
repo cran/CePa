@@ -1,20 +1,27 @@
-\name{get.cepa}
-\alias{get.cepa}
-\title{get single cepa object from cepa.all object}
+\name{plotNull}
+\alias{plotNull}
+\title{Plot the null distribution of the pathway score}
 \description{
-get single cepa object from cepa.all object
+Plot the null distribution of the pathway score
 }
 \usage{
-get.cepa(x, id = NULL, cen = 1)    
+plotNull(x)                 
 }
 \arguments{
-  \item{x}{a \link{cepa.all} object}
-  \item{id}{index or the name of the pathway}
-  \item{cen}{index or the name of the centrality}
+  \item{x}{a \link{cepa} object}
+}
+\details{
+There are two figures in the plotting.
+
+A) Distribution of node score in the pathway under simulation. 
+The distribution of node score in each simulation is measures by maximum value, 
+the 75th quantile, median value and minimum value; 
+
+B) Histogram of simulated scores in the pathway; 
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{cepa}}, \code{\link{cepa.all}}
+\code{\link{cepa}}, \code{\link{plot.cepa}}
 }
 \examples{
 \dontrun{
@@ -25,6 +32,7 @@ data(gene.list)
 # will spend about 20 min
 res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
 ora = get.cepa(res.ora, id = 5, cen = 3)
+plotNull(ora)
 
 # GSA extension
 # P53_symbol.gct and P53_cls can be downloaded from
@@ -34,5 +42,6 @@ label = read.cls("P53.cls", treatment="MUT", control="WT")
 # will spend about 45 min
 res.gsa = cepa.all(mat = eset, label = label, pc = PID.db$NCI)
 gsa = get.cepa(res.gsa, id = 5, cen = 3)
+plotNull(gsa)
 }
 }

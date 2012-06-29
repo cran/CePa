@@ -14,6 +14,8 @@ generate.pathway(el)
 \details{
     The function is a wrapper of \link[igraph]{graph.edgelist} and it generates
     a directed graph.
+    
+    In the function, repeated edged for two nodes will be eliminated.
 }
 \author{Zuguang Gu}
 \seealso{
@@ -21,7 +23,7 @@ generate.pathway(el)
 }
 \examples{
 
-edgelist = rbind(c("a", "b"), c("a", "c"))
+edgelist = rbind(c("a", "b"), c("a", "b"), c("a", "c"))
 g = generate.pathway(edgelist)
 
 }

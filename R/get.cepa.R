@@ -20,6 +20,6 @@ get.cepa = function(x, id = NULL, cen = 1) {
         cen = deparse(cen)
     }
     
-    return(x$pathway.result[[cen]][[id]])
+    return(x[[id]][[cen]])
 }
     

@@ -8,17 +8,17 @@ Calculate radiality centrality
 radiality(graph, mode=c("all", "in", "out"))
 }
 \arguments{
-  \item{graph}{\link[igraph]{igraph} object}
+  \item{graph}{an \link[igraph]{igraph} object}
   \item{mode}{mode of the centrality}
 }
 \details{
-The radiality is defined as sum(dG + 1 - d(v, w))/(n - 1). where d(w, v) is the
- length of the shortest path from node w to node v, dG is the diameter of the network,
- n is the size of the network.
+The radiality is defined as sum(d_G + 1 - d(v, w))/(n - 1). where d(w, v) is the
+length of the shortest path from node w to node v, d_G is the diameter of the network,
+n is the size of the network.
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{cepa}}, \code{\link{spread}}, \code{\link{reach}}, \code{\link{radiality}}
+\code{\link{spread}}, \code{\link{reach}}, \code{\link{radiality}}
 }
 \examples{
 require(igraph)

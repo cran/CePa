@@ -5,60 +5,57 @@
 Apply CePa algorithm on a list of pathways
 }
 \usage{
-cepa.all(dif, bk, pathList, interactionList, mapping = cbind(bk, bk),
-         cen = c("equal.weight", "in.degree", "out.degree", "betweenness", "in.reach", "out.reach"),
-         cen.name = sapply(cen, function(x){if(mode(x) == "name") deparse(x) else x}), iter = 1000,
-         min.node = 5, max.node = 500)    
+cepa.all(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, cen = default.centralities,
+    cen.name = sapply(cen, function(x) ifelse(mode(x) == "name", deparse(x), x)), 
+    glevel = "tvalue_abs", plevel = "mean", iter = 1000)    
 }
 \arguments{
   \item{dif}{differential gene list}
   \item{bk}{background gene list}
-  \item{pathList}{list of pathways}
-  \item{interactionList}{list of interactions}
-  \item{mapping}{a data frame or matrix providing mappings from gene id to pathway node id. 
-  The first column is node id and the second column is gene id.}
+  \item{mat}{expression matrix in which rows are genes and columns are samples}
+  \item{label}{a \link{sampleLabel} object identify the design of the microarray experiment}
+  \item{pc}{a pathway.catalogue object storing information of pathways}
   \item{cen}{centrality measuments, it can ce a string, or function has been quote}
   \item{cen.name}{centrality measurement names}
+  \item{glevel}{gene level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs"}
+  \item{plevel}{pathway level transformation, should be one of "max", "min", "median", "sum", "mean", "rank"}
   \item{iter}{number of simulations}
-  \item{min.node}{minimum number of nodes}
-  \item{max.node}{maximum number of nodes}
 }
 \details{
-The differential gene list and the background gene list should be indicated
-with the same identifiers (e.g. gene symbol or refseq ID). All genes in
-the differential gene list should exist in the background gene list.
+The function is a wrapper of \link{cepa.ora.all} and \link{cepa.univariate.all}.
+Selection of which function depends on the arguments specified.
 
-Basicly, a pathway contains a list of interactions. The pathList argument
-is a list where elements in the list is the vector of interaction IDs 
-in the pathway. The interactions in the pathway can be got from a interaction
-list pool represented as interactionList argument. The interactionList argument
-stores the total interaction list in the pathway catalogue. It represents
-as a three columns data frame or matrix where the first column is the interaction id,
-the second column is the input node id and the third column is the output node id.
+If \code{dif}, \code{bk}, \code{pc}, \code{cen}, \code{cen.name} and \code{iter}
+are specified, the arguments are passed to \link{cepa.ora.all}. The centrality-extension 
+of over-representation analysis (ORA) will be applied on the list of differential genes.
 
-The mapping data frame provide the mapping from node id to gene id. The 
-first column is the node id and the second column is the gene id. By default,
-it assumes every gene is the pathway is a single node.
-
-If the centrality measurement is set as a string, only pre-defined "equal.weight",
-"in.degree", "out.degree", "degree", "betweenness", "in.reach", "out.reach",
-"reach", "in.spread", "out.spread" and "spread" are allowed. More centrality
-measurements can be used by setting it as a function (such as closeness,
-cluster coefficient). In the cepa.all function, we recommand users choose
-at least two centrality measurements.
+If \code{mat}, \code{label}, \code{pc}, \code{cen}, \code{cen.name}, \code{glevel},
+\code{plevel} and \code{iter} are specified, the arguments are passed to \link{cepa.univariate.all}.
+The centrality-extension of gene-set analysis (GSA) will be applied on the whole gene expressions.
 }
 \value{
     A \code{cepa.all} class object
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{cepa}}
+\code{\link{cepa}}, \code{\link{cepa.ora.all}}, \code{\link{cepa.univariate.all}}
 }
 \examples{
 \dontrun{
+
 data(PID.db)
+
+# ORA extension
 data(gene.list)
-res = cepa.all(gene.list$dif, gene.list$bk, PID.db$NCI$pathList,
-               PID.db$NCI$interactionList, PID.db$NCI$mapping)
+# will spend about 20 min
+res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
+
+# GSA extension
+# P53_symbol.gct and P53_cls can be downloaded from
+# http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+eset = read.gct("P53_symbol.gct")
+label = read.cls("P53.cls", treatment="MUT", control="WT")
+# will spend about 45 min
+res.gsa = cepa.all(mat = eset, label = label, pc = PID.db$NCI)
 }
 }

@@ -7,7 +7,7 @@ Generate report for CePa analysis
 \usage{
 report(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 0.01, 0.05), 
        template.file = paste(system.file(package = "CePa"), "/extdata/cepa.template", sep=""),
-       only.sig = TRUE, ...)
+       only.sig = TRUE, dir.path = NULL, ...)
 }
 \arguments{
   \item{x}{\link{cepa.all} object}
@@ -17,11 +17,12 @@ report(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 0.01, 0.05)
   \item{only.sig}{whether to generate detailed report for every pathway.
   If it is set to FALSE, the page for every pathway under every centrality
   would be generated.}
+  \item{dir.path}{dir name}
   \item{...}{other arguments}
 }
 \details{
     The report would locate at the current working directory. View the report
-	by clicking \code{index.html} in the report directory.
+    by clicking \code{index.html} in the report directory.
 }
 \author{Zuguang Gu}
 \seealso{
@@ -30,9 +31,11 @@ report(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 0.01, 0.05)
 \examples{
 \dontrun{
 data(PID.db)
+
+# ORA extension
 data(gene.list)
-res = cepa.all(gene.list$dif, gene.list$bk, PID.db$NCI$pathList,
-               PID.db$NCI$interactionList, PID.db$NCI$mapping)
-report(res)
+# will spend about 20 min
+res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
+report(res.ora)
 }
 }

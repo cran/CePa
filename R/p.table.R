@@ -1,4 +1,3 @@
-
 # p values of all pathways
 p.table = function(x) {
 
@@ -6,14 +5,14 @@ p.table = function(x) {
         stop("x should be cepa.all object.\n")
     }
     
-    n.centrality = length(x$pathway.result)
-    p.value = matrix(0, nrow=length(x$pathway.name), ncol= n.centrality)
-    for(i in 1:n.centrality) {
-        p.value[, i] = sapply(x$pathway.result[[i]], function(x) x$p.value)
+    n.pathway = length(x)
+    p.value = matrix(0, nrow=length(x), ncol= length(x[[1]]))
+    for(i in 1:length(x)) {
+        p.value[i, ] = sapply(x[[i]], function(x) x$p.value)
     }
 
-    rownames(p.value) = x$pathway.name
-    colnames(p.value) = names(x$pathway.result)
+    rownames(p.value) = names(x)
+    colnames(p.value) = names(x[[1]])
     
     return(p.value)
 }

@@ -60,23 +60,32 @@ Zuguang Gu <jokergoo@gmail.com>
 \keyword{package}
 \examples{
 \dontrun{
-# the use of CePa package is simple
-# the following is the standard process
-# 1. load the pathway database
+
+# load the pathway database
 data(PID.db)
 
-# 2. get your differential gene list
-#    if you are using the PID.db pathway database
-#    please ensure your gene id is official symbol (this is important)
-# 3. also, your background gene list, should be as symbol
-# 4. run CePa algorithm
-#    here, dif.list is your differential gene list
-#    and bk.list is your background gene list
-res = cepa.all(dif.list, bk.list, PID.db$NCI$pathList,
-               PID.db$NCI$interactionList, PID.db$NCI$mapping)
+# if you only have a differential gene list or other genes of interest
+# in form of a list, you can apply the centrality-extended ORA method
+res = cepa.all(dif = dif, bk = bk, pc = PID.db$NCI)
+# in the above code, dif is your differential gene list, bk is your background
+# gene list which always be whole set of genes on a certain microarray. If you 
+# do not have a background gene list, do not set it and the function would use
+# the whole human genome genes as default. pc is the pathway catalogue which in
+# this example is the NCI catalogue gathered from PID database.
+
+# after about 20 min, you can obtain a detailed report of the analysis
+report(res)
+
                
-# 5. obtain the report of your analysis
-report(res, adj.method = "BH", cutoff = 0.05, only.sig = FALSE)
-# just wait for a moment, since there are a lot of figures to generate!
+# if you have a complete gene expression data, you can apply the centrality-extended
+# GSA methods
+res = cepa.all(mat = mat, label = label, pc = PID.db$NCI)
+# mat is your expression value matrix, label is the design of the microarray experiment.
+# By default, we use absolute value of t-value as the statistic for each gene and
+# use the mean value of genes' statistics as the pathway statistic.
+
+# after about 50 min, you can obtain a detailed report of the analysis
+report(res)
+
 }
 }

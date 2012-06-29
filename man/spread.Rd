@@ -9,9 +9,9 @@ spread(graph, mode=c("all", "in", "out"),
        weights=E(graph)$weight, f=function(x)1/x)    
 }
 \arguments{
-  \item{graph}{\link[igraph]{igraph} object}
+  \item{graph}{an \link[igraph]{igraph} object}
   \item{mode}{mode of the centrality}
-  \item{weights}{If the edges in the graph have weight, then by default, the weight
+  \item{weights}{If edges in the graph have weight, then by default, the weight
   is used to calculate the length of the shortest path. Set it to NULL to supress
   the weight}
   \item{f}{function for the weaken rate}
@@ -26,7 +26,7 @@ sum(1/d(w, v)) where d(w, v) is the length of the shortest path of node w and no
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{cepa}}, \code{\link{eccentricity}}, \code{\link{reach}}, \code{\link{radiality}}
+\code{\link{eccentricity}}, \code{\link{reach}}, \code{\link{radiality}}
 }
 \examples{
 require(igraph)

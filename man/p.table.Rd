@@ -8,19 +8,32 @@ Table of p-values of pathways
 p.table(x)
 }
 \arguments{
-  \item{x}{\link{cepa.all} object}
+  \item{x}{a \link{cepa.all} object}
 }
 \value{
-A data matrix where rows represent pathways and columns represent centralities.
+A data matrix where rows are pathways and columns are centralities.
 }
 \author{Zuguang Gu}
 \seealso{
 \code{\link{cepa}}
 }
 \examples{
+\dontrun{
 data(PID.db)
+
+# ORA extension
 data(gene.list)
-res = cepa.all(gene.list$dif, gene.list$bk, PID.db$NCI$pathList[1:2],
-               PID.db$NCI$interactionList, PID.db$NCI$mapping, iter = 500)
-p.table(res)
+# will spend about 20 min
+res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
+p.table(res.ora)
+
+# GSA extension
+# P53_symbol.gct and P53_cls can be downloaded from
+# http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+eset = read.gct("P53_symbol.gct")
+label = read.cls("P53.cls", treatment="MUT", control="WT")
+# will spend about 45 min
+res.gsa = cepa.all(mat = eset, label = label, pc = PID.db$NCI)
+p.table(res.gsa)
+}
 }

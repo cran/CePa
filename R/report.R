@@ -1,9 +1,11 @@
 report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 0.01, 0.05), 
           template.file = paste(system.file(package = "CePa"), "/extdata/cepa.template", sep=""),
-          only.sig = TRUE, ...) {
-          
-    dir.path = paste("cepa.report", as.integer(Sys.time()), sep=".")
-    dir.create(dir.path, showWarnings=FALSE)
+          only.sig = TRUE, dir.path = NULL, ...) {
+    
+    if(is.null(dir.path)) {
+	    dir.path = paste("cepa.report", gsub("[ :]", "-", as.character(Sys.time())), sep=".")
+    }
+	dir.create(dir.path, showWarnings=FALSE)
     
     f1.path = paste(dir.path, "/f1.png", sep="")
     png(f1.path, width=800, height=200)
@@ -14,26 +16,31 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
     np = ncol(p.value)
     
     p2 = p.value
-    p2 = apply(p.value, 2, p.adjust, method=adj.method)
+    p2 = apply(p.value, 2, p.adjust, adj.method)
     f2.path = paste(dir.path, "/f2.png", sep="")
     pathway.name = rownames(p2)
     max.length = max(nchar(pathway.name))
-    png(f2.path, width=800, height=200+max.length*15)
+    png(f2.path, width=800, height=400)
     plot(x, adj.method=adj.method, only.sig=TRUE, cutoff=cutoff)
     dev.off()
 
     # generate images for each pathway
     dir.create(paste(dir.path, "/image", sep=""), showWarnings=FALSE)
-    cen = names(x$pathway.result)
-    pathway.name = x$pathway.name
+    cen = names(x[[1]])
+    pathway.name = names(x)
     for(i in 1:length(pathway.name)) {
         if(only.sig){
             if(any(p2[i, ] < cutoff)) {
                 cat("  generate images for", pathway.name[i], "...\n")
                 for(ce in cen) {
-                    image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, ".png", sep="")
-                    png(image.path, width=1200, height=800)
+                    image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-graph.png", sep="")
+                    png(image.path, width=800, height=750)
                     plot(x, pathway.name[i], ce, ...)
+                    dev.off()
+                    
+                    image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-null.png", sep="")
+                    png(image.path, width=800, height=500)
+                    plot(x, pathway.name[i], ce, type="null", ...)
                     dev.off()
                 }
             }
@@ -41,9 +48,14 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
         else {
             cat("  generate images for", pathway.name[i], "...\n")
             for(ce in cen) {
-                image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, ".png", sep="")
+                image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-graph.png", sep="")
                 png(image.path, width=1200, height=800)
                 plot(x, pathway.name[i], ce, ...)
+                dev.off()
+                
+                image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-null.png", sep="")
+                png(image.path, width=1000, height=500)
+                plot(x, pathway.name[i], ce, type="null", ...)
                 dev.off()
             }
         }
@@ -74,15 +86,23 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
 }
 
 table.head = function(x, ...) {
-    h = c("Pathway", "Differential nodes", "All nodes", "Differential genes", "All genes", names(x$pathway.result))
+    if(is.ora(x)) {
+        h = c("Pathway", "Differential nodes", "All nodes", "Differential genes", "All genes", names(x[[1]]))
+    } else {
+        h = c("Pathway", names(x[[1]]))
+    }
     return(h)
 }
 
 table.content = function(x, adj.method="none", cutoff = ifelse(adj.method == "none", 0.01, 0.05), only.sig = TRUE, ...) {
     p.value = apply(p.table(x), 2, p.adjust, adj.method)
-    count = t(sapply(x$pathway.result[[1]], function(x) x$count))
-    pathway.name = x$pathway.name
-    cen = names(x$pathway.result)
+    
+    if(is.ora(x)) {
+        count = t(sapply(x, function(x) x[[1]]$count))
+    }
+    
+    pathway.name = names(x)
+    cen = names(x[[1]])
     np = nrow(p.value)
     l = apply(p.value, 1, function(x) sum(x < cutoff) > 0)
 
@@ -94,26 +114,30 @@ table.content = function(x, adj.method="none", cutoff = ifelse(adj.method == "no
     o = c(i1[o1], i2[o2])
     
     pathway.name = pathway.name[o]
-    count = count[o, ]
+    if(is.ora(x)) {
+        count = count[o, ]
+    }
     l = l[o]
     p.value = p.value[o,,drop=FALSE]
     p.value = apply(p.value, 2, round, 4)
-	p.text = p.value
+    p.text = p.value
     
-    for(i in 1:np) {
-        for(j in 1:dim(count)[2]) {
-            count[i, j] = paste("<td>", count[i, j], "</td>", sep = "")
+    if(is.ora(x)) {
+        for(i in 1:np) {
+            for(j in 1:dim(count)[2]) {
+                count[i, j] = paste("<td>", count[i, j], "</td>", sep = "")
+            }
         }
     }
     for(i in 1:np) {
         for(j in 1:length(cen)) {
-		
+        
             if(p.value[i, j] < cutoff) {
                 p.text[i, j] = paste("<strong>", p.text[i, j], "</strong>", sep = "")
             }
-			
-			if(l[i] || only.sig == FALSE) {
-                p.text[i, j] = paste("<td><a href='image/", pathway.name[i], "-", cen[j], ".png' />", p.text[i, j], "</a></td>", sep = "")
+            
+            if(l[i] || only.sig == FALSE) {
+                p.text[i, j] = paste("<td><a href='#' onclick=\"getGraph('", pathway.name[i], "', '", cen[j], "');return false;\" />", p.text[i, j], "</a></td>", sep = "")
             }
             else {
                 p.text[i, j] = paste("<td>", p.text[i, j], "</td>", sep = "")
@@ -121,9 +145,15 @@ table.content = function(x, adj.method="none", cutoff = ifelse(adj.method == "no
         }
     }
     p.text.row = apply(p.text, 1, function(x) paste(x, sep = "", collapse = ""))
-    count.row = apply(count, 1, function(x) paste(x, sep = "", collapse = ""))
+    if(is.ora(x)) {
+        count.row = apply(count, 1, function(x) paste(x, sep = "", collapse = ""))
+    }
     tr.row = sapply(l, function(x) ifelse(x, "<tr class='significant-pathway'>", "<tr>"))
-    return(paste(tr.row, "<td>", pathway.name, "</td>", count.row, p.text.row, "</tr>", sep = ""))
+    if(is.ora(x)) {
+        return(paste(tr.row, "<td>", pathway.name, "</td>", count.row, p.text.row, "</tr>", sep = ""))
+    } else {
+        return(paste(tr.row, "<td>", pathway.name, "</td>", p.text.row, "</tr>", sep = ""))
+    }
 }
 
 

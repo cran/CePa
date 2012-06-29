@@ -8,12 +8,12 @@ names of the pathway nodes
 pathway.nodes(pathway)
 }
 \arguments{
-  \item{pathway}{\link[igraph]{igraph} object}
+  \item{pathway}{an \link[igraph]{igraph} object}
 }
 \details{
 If nodes in the pathway have names, then it returns a vector of nodes
 names. If nodes in the pathway have no name, it just returns the index
-of nodes.
+of nodes (start by 0).
 }
 \author{Zuguang Gu}
 \examples{
