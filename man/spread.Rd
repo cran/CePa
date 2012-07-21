@@ -26,7 +26,7 @@ sum(1/d(w, v)) where d(w, v) is the length of the shortest path of node w and no
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{eccentricity}}, \code{\link{reach}}, \code{\link{radiality}}
+\code{\link{reach}}, \code{\link{radiality}}
 }
 \examples{
 require(igraph)

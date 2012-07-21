@@ -12,6 +12,12 @@ get.cepa(x, id = NULL, cen = 1)
   \item{id}{index or the name of the pathway}
   \item{cen}{index or the name of the centrality}
 }
+\details{
+The \code{cepa.all} object contains the result for pathways under several centrality
+measurements. In \code{cepa.all} object, each pathway under a specific centrality
+is a single \code{cepa} object. The \code{get.cepa} is used to get the \code{cepa}
+object from the \code{cepa.all} object.
+}
 \author{Zuguang Gu}
 \seealso{
 \code{\link{cepa}}, \code{\link{cepa.all}}

@@ -13,11 +13,14 @@ plotNull(x)
 \details{
 There are two figures in the plotting.
 
-A) Distribution of node score in the pathway under simulation. 
-The distribution of node score in each simulation is measures by maximum value, 
-the 75th quantile, median value and minimum value; 
+A) Distribution of node score in the pathway under simulation. Since a pathway contains
+a list of nodes. The distribution of node score for the pathway in each simulation is measures by maximum value, 
+the 75th quantile, median value and minimum value. The distribution of node score for 
+the pathway in the real data is highlighted.
 
-B) Histogram of simulated scores in the pathway; 
+B) Histogram of simulated pathway scores. 
+
+The function is always called through \code{\link{plot.cepa.all}} and \code{\link{plot.cepa}}.
 }
 \author{Zuguang Gu}
 \seealso{

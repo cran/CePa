@@ -53,6 +53,14 @@ none-gene nodes such as microRNAs and compounds. These nodes also
 contribute to the topology of the pathway. So, when analyzing pathways, 
 all types of nodes are retained.
 
+The core function of the package is \code{\link{cepa.all}}. There is also a parallel version
+\code{\link{cepa.all.parallel}}. User can refer to the vignette to find
+how to use it (\code{vignette("CePa")}).
+
+}
+\references{
+Gu Z, Liu J, Cao K, Zhang J, Wang J. Centrality-based pathway enrichment: a systematic 
+approach for finding significant pathways dominated by key genes. BMC Syst Biol. 2012 Jun 6;6(1):56.
 }
 \author{
 Zuguang Gu <jokergoo@gmail.com>

@@ -13,7 +13,7 @@ pathway.nodes(pathway)
 \details{
 If nodes in the pathway have names, then it returns a vector of nodes
 names. If nodes in the pathway have no name, it just returns the index
-of nodes (start by 0).
+of nodes (start by 1, after igraph version 0.6).
 }
 \author{Zuguang Gu}
 \examples{

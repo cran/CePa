@@ -1,9 +1,8 @@
 \name{cepa.univariate}
 \alias{cepa.univariate}
-\title{Access the significance of a pathway}
+\title{Apply centrality-extended GSA on a single pathway}
 \description{
-Using network centrality as weight to access the significance of a pathway.
-Pathway nodes are taken as network units instead of genes.
+Apply centrality-extended GSA on a single pathway
 }
 \usage{
 cepa.univariate(mat, label, pc, pathway = NULL, id = NULL, cen = "equal.weight",
@@ -27,9 +26,13 @@ cepa.univariate(mat, label, pc, pathway = NULL, id = NULL, cen = "equal.weight",
   \item{r.node.level.from.expr}{for simplicity of computing}
   \item{iter}{number of simulations}
 }
+\details{
+The function is always called by \code{\link{cepa.univariate.all}}. But you can still
+use it if you realy want to analysis just one pathway under one centrality.
+
+}
 \value{
 A \code{cepa} class object
-
 }
 \author{Zuguang Gu}
 \seealso{

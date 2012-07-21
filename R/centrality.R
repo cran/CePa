@@ -80,21 +80,6 @@ reach = function(graph, weights=E(graph)$weight, mode=c("all", "in", "out")) {
     return(s)
 }
 
-eccentricity = function(graph, mode=c("all", "in", "out")) {
-    mode = mode[1]
-    
-    sp = shortest.paths(graph, mode=mode, weights=NA)
-    s = apply(sp, 1, function(x) {
-            if(all(x == Inf)) {
-                return(0)
-            }
-            else {
-                return(1/max(x[x != Inf]))
-            }
-        })
-    return(s)
-}
-
 radiality = function(graph, mode=c("all", "in", "out")) {
     mode = mode[1]
     

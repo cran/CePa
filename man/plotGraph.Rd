@@ -21,11 +21,16 @@ plotGraph(x, node.name = NULL, node.type = NULL,
 \details{
 Graph view of the pathway where the size of node is proportional to centrality 
 value of the node. 
+
+By default, the layout for the pathway tree-like. If the number of pathway nodes
+is large, the layout would be a random layout.
  
 The function returns a \link[igraph]{igraph} object, so if users don't satisfy 
-with the network visualization, they can draw graphs of the network with their
+with the network visualization (To tell the truth, if there are too many pathway nodes,
+the layout would be real ugly. :(), they can draw graphs of the network with their
 own settings.
 
+The function is always called through \code{\link{plot.cepa.all}} and \code{\link{plot.cepa}}.
 }
 \value{
 A \link[igraph]{igraph} object of the pathway

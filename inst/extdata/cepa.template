@@ -28,8 +28,11 @@
     .significant-pathway {
         background-color: rgb(251, 180, 174);
     }
-    .significant {
-        font-weight: bold;
+    .significant-pathway a {
+        color: black;
+    }
+	.significant-pathway a strong {
+        color: blue;
     }
     .legend {
         font-weight: bold;
@@ -46,94 +49,10 @@
     }
 
 </style>
-<script type="text/javascript">
-
-function initialAjax () {
-	var xmlHttp;
-	try {
-		// Firefox, Opera 8.0+, Safari
-		xmlHttp=new XMLHttpRequest();
-	}
-	catch (e) {
-	// Internet Explorer
-		try {
-			xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
-		}
-		catch (e) {
-			try {
-				xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-			}
-			catch (e) {
-				alert("blabla");
-				return false;
-			}
-		}
-	}
-	return xmlHttp;
-}
-
-function getGraph(pathway, centrality) {
-	var obj=document.getElementById("pathway-graph-div");
-	if(obj) {
-		document.body.removeChild(obj); 
-	}
-	
-	var obj = document.createElement("div");
-	obj.setAttribute("id", "pathway-graph");
-	obj.style.position = 'absolute';
-	obj.style.top = '0';
-	obj.style.padding = "20px";
-	obj.style.width = "900px";
-	obj.style.zIndex = "999";
-	obj.style.margin = "40px 0px 40px 0px";
-	obj.style.background = "#ffffff";
-
-	var objopacity = document.createElement("div");
-	objopacity.setAttribute("id", "pathway-graph-div");
-	objopacity.style.position = 'absolute';
-	objopacity.style.left = '0';
-	objopacity.style.top = '0';
-	objopacity.style.width = "100%";
-	objopacity.style.zIndex = "99";
-	objopacity.style.background = "#cccccc";
-	objopacity.style.opacity = "0.5";
-	objopacity.style.filter = "alpha(opacity=50)";
-		
-	
-	var f1 = document.createElement("div");
-	f1.innerHTML = "<p><img src='image/"
-	               + pathway
-				   + "-"
-				   + centrality
-				   + "-null.png' /></p>"
-				   + "<p><b>Figure 1</b>. Null distribution of pathway scores of "
-				   + pathway + " under " + centrality + ".</p>";
-	
-	var f2 = document.createElement("div");
-	f2.innerHTML = "<p><img src='image/"
-	               + pathway
-				   + "-"
-				   + centrality
-				   + "-graph.png' /></p>"
-				   + "<p><b>Figure 2</b>. Graph of "
-				   + pathway + " under " + centrality+ ".</p>";
-				   
-	var close = document.createElement("p");
-	close.innerHTML = "<input type='button' value='close' class='form-button' onclick='document.body.removeChild(document.getElementById(\"pathway-graph-div\"));document.body.removeChild(document.getElementById(\"pathway-graph\"))' />";
-	
-	obj.appendChild(f1);
-	obj.appendChild(f2);
-	obj.appendChild(close);
-	
-	window.scrollTo(0,0)
-	obj.style.left = "10px";
-	objopacity.style.height = document.body.scrollHeight + 40 +"px";
-	document.body.appendChild(objopacity);
-	document.body.appendChild(obj);
-	
-}
-
-</script>
+<script type="text/javascript" src="js/json2.min.js"></script>
+<script type="text/javascript" src="js/AC_OETags.min.js"></script>
+<script type="text/javascript" src="js/cytoscapeweb.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>
     <div id="container">

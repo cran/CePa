@@ -85,7 +85,9 @@ In \texttt{CePa} package, four catalogues (PID, KEGG, BioCarta and Reactome) fro
 The pathway data are parsed from XML format file provided by the PID FTP site. 
 The Perl code for parsing can be obtained from the author's website 
 (http://mcube.nju.edu.cn/jwang/lab/soft/cepa/). The pathway data is stored
-in \texttt{PID.db}.
+in \texttt{PID.db}. Note only part of pathways in the XML file are listed on the PID website. Also, 
+we have set the minimum and maximum connected nodes when extracting pathways 
+from PID, so not all the pathways listed on the PID website are in PID.db.
 \begin{Schunk}
 \begin{Sinput}
 > library(CePa)
@@ -114,7 +116,7 @@ between node count and gene count in biological pathways.
 > PID.db$NCI
 \end{Sinput}
 \begin{Soutput}
-  The catalogue contains 225 pathways.
+  The catalogue contains 206 pathways.
 \end{Soutput}
 \begin{Sinput}
 > plot(PID.db$NCI)
@@ -138,17 +140,40 @@ the interaction list and the mapping list. The corresponding list name are \text
 \end{Sinput}
 \begin{Soutput}
 [1] "pathList"        "interactionList" "mapping"         "node.name"      
-[5] "node.type"       "created" 
+[5] "node.type"       "version" 
+\end{Soutput}
+\end{Schunk}
+
+You can find the version of NCI data.
+\begin{Schunk}
+\begin{Sinput}
+> PID.db$NCI$version
+\end{Sinput}
+\begin{Soutput}
+[1] "2012_07_19 09:34::20"
 \end{Soutput}
 \end{Schunk}
 
 The \texttt{pathList} is a list in which each item is a list of interaction IDs
 \begin{Schunk}
 \begin{Sinput}
-> head(PID.db$NCI$pathList[[1]])
+> head(PID.db$NCI$pathList, n = 2)
 \end{Sinput}
 \begin{Soutput}
-[1] "209941" "209933" "209957" "209927" "209931" "209958"
+$wnt_signaling_pathway
+ [1] "203098" "203087" "203104" "203106" "203125" "203127" "203092" "203142"
+ [9] "203097" "203111" "203099" "203118" "203103" "203137" "203143" "203091"
+[17] "203088" "203141" "203128" "203089" "203101" "203117" "203126" "203140"
+[25] "203095" "203108" "203119" "203129" "203113" "203120" "203094" "203102"
+[33] "203122" "203136" "203145" "203105" "203123" "203144" "203130" "203132"
+[41] "203124" "203107" "203110" "203093" "203133" "203090" "203096" "203109"
+[49] "203100" "203121" "203116" "203112"
+
+$cdc42_reg_pathway
+ [1] "203416" "203396" "203420" "203393" "203405" "203418" "203392" "203415"
+ [9] "203388" "203408" "203389" "203390" "203403" "203412" "203398" "203410"
+[17] "203406" "203395" "203391" "203401" "203394" "203419" "203404" "203397"
+[25] "203399" "203407" "203402" "203400" "203413" "203411" "203409" "203414"
 \end{Soutput}
 \end{Schunk}
 
@@ -161,12 +186,12 @@ is the output node ID.
 \end{Sinput}
 \begin{Soutput}
   interaction.id  input output
-1         201405 200665 205628
-2         201405 200666 205628
-3         204164 208481 208484
-4         204164 202538 208484
-5         206327 200592 200709
-6         206327 210859 200709
+1         503376 507485 506711
+2         503376 507487 507485
+3         204164 202538 208490
+4         204164 208487 208490
+5         100688 101169 101176
+6         100688 101177 101176
 \end{Soutput}
 \end{Schunk}
 
@@ -178,12 +203,12 @@ and the second column is the gene ID.
 \end{Sinput}
 \begin{Soutput}
   node.id  symbol
-1  201978     HGS
-2  202230 ARHGAP6
-3  201405    XIAP
-4  201647    CRY2
-5  202024    GZMA
-6  201386    HFE2
+1  202230 ARHGAP6
+2  201405    XIAP
+3  503376  SLC7A2
+4  203548   SATB1
+5  201647    CRY2
+6  508774     CRH
 \end{Soutput}
 \end{Schunk}
 
@@ -238,13 +263,13 @@ to the pathway catalogue.
 \end{Sinput}
 \begin{Soutput}
   Calculate pathway scores...
-    1/205, hif1_tfpathway...
-      - equal.weight: 0.7212787
-      - in.degree: 0.7972028
-      - out.degree: 0.8321678
-      - betweenness: 0.8031968
-      - in.reach: 0.6603397
-      - out.reach: 0.8141858
+    1/211, wnt_signaling_pathway...
+      - equal.weight: 0.878
+      - in.degree: 0.864
+      - out.degree: 0.921
+      - betweenness: 0.89
+      - in.reach: 0.81
+      - out.reach: 0.91
     ...
 \end{Soutput}
 \end{Schunk}
@@ -252,10 +277,10 @@ to the pathway catalogue.
 The differential gene list and the background gene list should be indicated
 with the same identifiers (e.g. gene symbol or refseq ID). All genes in
 the differential gene list should exist in the background gene list. In this
-example, gene list must be formatted as gene symbol. If background gene list is
+example, since \texttt{PID.db} is applied, gene list must be formatted as gene symbol. If background gene list is
 not specified, the function use whole human genome genes as default.
 
-By default, \texttt{cepa.all} use \texttt{equal.weight}, \texttt{in.degree}, \texttt{out.degree},
+By default, \texttt{cepa.all} calls \texttt{equal.weight}, \texttt{in.degree}, \texttt{out.degree},
 \texttt{betweenness}, \texttt{in.reach} and \texttt{out.reach} centralities as pathway nodes' weight.
 More centrality measurements can be used by setting it as a function (such as closeness,
 cluster coefficient).
@@ -263,23 +288,23 @@ cluster coefficient).
 In order to generate the null distribution of the pathway score, novel differential
 gene list is sampled from the background gene list. P-values are calculated from 1000 simulations by default.
 
-\texttt{res} is a \texttt{cepa.all} class object. To see the general information
+The calculation would spend about 12 min. \texttt{res} is a \texttt{cepa.all} class object. To see the general information
 of this object:
 \begin{Schunk}
 \begin{Sinput}
 > res
 \end{Sinput}
 \begin{Soutput}
-  number of pathways: 205 
+number of pathways: 211 
 
-  Significant pathways (p.value <= 0.01):
-               Number
-  equal.weight     18
-  in.degree        20
-  out.degree       16
-  betweenness      15
-  in.reach         21
-  out.reach        20
+Significant pathways (p.value <= 0.01):
+             Number
+equal.weight     20
+in.degree        19
+out.degree       19
+betweenness      14
+in.reach         19
+out.reach        20
 \end{Soutput}
 \end{Schunk}
 
@@ -298,7 +323,7 @@ can be compared through the heatmap of p-values (Figure \ref{f2}). Users can sel
 raw p-values.
 \begin{Schunk}
 \begin{Sinput}
-> plot(res, adj.method = "BH", cutoff = 0.05)
+> plot(res)
 \end{Sinput}
 \end{Schunk}
 \begin{figure}[htbp]
@@ -308,12 +333,37 @@ raw p-values.
 \end{center}
 \end{figure}
 
-By default, \texttt{plot} generates the heatmap containing all pathways.
-If only significant pathways are of interest, the \texttt{only.sig} argument
-can be set to \texttt{TRUE}. (Figure \ref{f3}).
+By default, \texttt{CePa} use \texttt{p.adjust} to calculate adjusted p-values,
+so only methods valid for \texttt{p.adjust} can be applied to \texttt{CePa}. However,
+there is another popular method to adjust p-values: \texttt{qvalue}. \texttt{CePa}
+did not implement it since errors may occur when evaluating some kind of p-values.
+Nevertheless, users can override the default \texttt{p.adjust} to support \texttt{qvalue} 
+by themselves, use code below:
 \begin{Schunk}
 \begin{Sinput}
-> plot(res, adj.method = "BH", only.sig = TRUE, cutoff = 0.01)
+> library(qvalue)
+> p.adjust = function(p, method = c("holm", "hochberg", "hommel", "bonferroni",
++                   "BH", "BY", "fdr", "none", "qvalue"), ...) {
++   if(method == "qvalue") {
++       # qvalue has more arguments, pass them by ...
++       qvalue(p, ...)$qvalue
++   } else {
++       stats::p.adjust(p, method)
++   }
++ }
+\end{Sinput}
+\end{Schunk}
+
+R will first look for \texttt{p.adjust} in \texttt{.GlobalEnv} environment and get your own \texttt{p.adjust}.
+
+By default, \texttt{plot} generates the heatmap containing all pathways.
+If only significant pathways are of interest, the \texttt{only.sig} argument
+can be set to \texttt{TRUE}. (Figure \ref{f3}). Here we do not set \texttt{cutoff}
+arguments because if adjusted method is used, the default cutoff is 0.05, while if user
+just wants the raw p-values, the default cutoff is 0.01.
+\begin{Schunk}
+\begin{Sinput}
+> plot(res, adj.method = "BH", only.sig = TRUE)
 \end{Sinput}
 \end{Schunk}
 \begin{figure}[htbp]
@@ -331,20 +381,20 @@ just returns the raw p-values.
 > head(pt)
 \end{Sinput}
 \begin{Soutput}
-                      equal.weight   in.degree  out.degree betweenness
-hif1_tfpathway         0.721278721 0.797202797 0.832167832 0.803196803
-s1p_s1p5_pathway       0.144855145 0.199800200 0.160839161 0.055944056
-wnt_signaling_pathway  0.869130869 0.864135864 0.907092907 0.896103896
-ap1_pathway            0.002997003 0.002997003 0.000999001 0.000999001
-lpa4_pathway           0.811188811 0.830169830 0.815184815 0.714285714
-avb3_opn_pathway       0.796203796 0.594405594 0.649350649 0.310689311
-                         in.reach   out.reach
-hif1_tfpathway        0.660339660 0.814185814
-s1p_s1p5_pathway      0.069930070 0.145854146
-wnt_signaling_pathway 0.809190809 0.906093906
-ap1_pathway           0.003996004 0.000999001
-lpa4_pathway          0.765234765 0.751248751
-avb3_opn_pathway      0.729270729 0.589410589
+                        equal.weight  in.degree  out.degree betweenness
+wnt_signaling_pathway    0.878121878 0.86413586 0.921078921 0.890109890
+cdc42_reg_pathway        0.858141858 0.84515485 0.818181818 0.852147852
+mtor_4pathway            0.777222777 0.80319680 0.707292707 0.596403596
+plk3_pathway             0.007992008 0.01598402 0.007992008 0.002997003
+era_genomic_pathway      0.079920080 0.08891109 0.047952048 0.074925075
+insulin_glucose_pathway  1.000000000 1.00000000 1.000000000 1.000000000
+                          in.reach   out.reach
+wnt_signaling_pathway   0.81018981 0.910089910
+cdc42_reg_pathway       0.84815185 0.859140859
+mtor_4pathway           0.83616384 0.422577423
+plk3_pathway            0.01398601 0.005994006
+era_genomic_pathway     0.09290709 0.017982018
+insulin_glucose_pathway 1.00000000 1.000000000
 \end{Soutput}
 \end{Schunk}
 
@@ -353,13 +403,13 @@ We can get the result for single pathway under specific centrality from the
 for the centrality.
 \begin{Schunk}
 \begin{Sinput}
-> g = get.cepa(res, id = "mapktrkpathway", cen = "in.degree")
+> g = get.cepa(res, id = "mapktrkpathway", cen = "in.reach")
 > g
 \end{Sinput}
 \begin{Soutput}
   procedure: ora 
-  weight: in.degree 
-  p-value: 0.010 
+  weight: in.reach 
+  p-value: 0.002 
 \end{Soutput}
 \end{Schunk}
 
@@ -412,20 +462,20 @@ on the \texttt{cepa.all} object by specifying the index of the pathway and the
 index of the centrality (Figure \ref{f6}).
 \begin{Schunk}
 \begin{Sinput}
-> plot(res, id = "mapktrkpathway", cen = "in.degree")
-> plot(res, id = "mapktrkpathway", cen = "in.degree", type = "null")
-> plot(res, id = "mapktrkpathway", cen = "in.degree",
+> plot(res, id = "mapktrkpathway", cen = "in.reach")
+> plot(res, id = "mapktrkpathway", cen = "in.reach", type = "null")
+> plot(res, id = "mapktrkpathway", cen = "in.reach",
 +      node.name = PID.db$NCI$node.name,
 +      node.type = PID.db$NCI$node.type)
 \end{Sinput}
 \end{Schunk}
 
-If userd use \texttt{plot} to draw network graphs, the function would return an
+If users use \texttt{plot} to draw network graphs, the function would return an
 \texttt{igraph} object. So if users are not satisfy with the default graph, they
 can visulize by their own methods.
 \begin{Schunk}
 \begin{Sinput}
-> obj = plot(res, id = "mapktrkpathway", cen = "in.degree")
+> obj = plot(res, id = "mapktrkpathway", cen = "in.reach")
 > class(obj)
 [1] "igraph"
 \end{Sinput}
@@ -433,8 +483,8 @@ can visulize by their own methods.
 
 The \texttt{igraph} package provides a \texttt{write.graph} function to output
 graph into several formats. As I have tried, with \texttt{graphml} format, 
-Cytoscape Web (http://http://cytoscapeweb.cytoscape.org/) can make a more beautiful
-visualization of the network.
+Cytoscape Web \cite{Lopes15092010} (http://http://cytoscapeweb.cytoscape.org/) can make a more beautiful
+and interactive visualization of the network.
 \begin{Schunk}
 \begin{Sinput}
 > write.graph(obj, file = "example-network.xml", format = "graphml")
@@ -448,7 +498,8 @@ under a single centrality by identifying the id of the pathway in the catalogue.
 \begin{Schunk}
 \begin{Sinput}
 > res.pathway = cepa(dif = gene.list$dif, bk = gene.list$bk,
-+               pc = PID.db$NCI, id = 2)
++               pc = PID.db$NCI, "mapktrkpathway",
++               cen = "in.reach")
 \end{Sinput}
 \end{Schunk}
 
@@ -479,7 +530,8 @@ The null distribution of the pathway score could then be generated by permuting 
 
 Since GSA procedure need a complete expression matrix, we first read the P53 microarray data set.
 The \texttt{P53\_symbol.gct} and \texttt{P53.cls} can be downloaded from
-http://mcube.nju.edu.cn/jwang/lab/soft/cepa/.
+http://mcube.nju.edu.cn/jwang/lab/soft/cepa/. \texttt{read.gct} and \texttt{read.cls}
+are simple functions to read expression data and phenotype data.
 \begin{Schunk}
 \begin{Sinput}
 > eset = read.gct("P53_symbol.gct")
@@ -489,23 +541,25 @@ http://mcube.nju.edu.cn/jwang/lab/soft/cepa/.
 \end{Sinput}
 \end{Schunk}
 
-Here, we also use \texttt{cepa.all} to do batch pathway analysis.
+Here, we also use \texttt{cepa.all} to do batch pathway analysis. The following
+code spent about 38 min with 1000 sample permutations.
 \begin{Schunk}
 \begin{Sinput}
 > res = cepa.all(mat = eset, label = label, pc = PID.db$NCI,
-                 glevel = "tvalue_sq", plevel = "mean")
++                glevel = "tvalue_sq", plevel = "mean")
 \end{Sinput}
 \begin{Soutput}
   Calculate gene level values.
   Calculate pathway score...
-    1/205, hif1_tfpathway...
+    1/211, wnt_signaling_pathway...
       Calculate node level value and permutate sample labels...
-      - equal.weight: 0.788
-      - in.degree: 0.653
-      - out.degree: 0.405
-      - betweenness: 0.303
-      - in.reach: 0.917
-      - out.reach: 0.499
+      17 genes measured in the pathway...
+      - equal.weight: 0.587
+      - in.degree: 0.652
+      - out.degree: 0.777
+      - betweenness: 0.466
+      - in.reach: 0.56
+      - out.reach: 0.696
     ...
 \end{Soutput}
 \end{Schunk}
@@ -528,28 +582,28 @@ Print the general result of the analysis and plot figures (figure \ref{f8}).
 > res
 \end{Sinput}
 \begin{Soutput}
-  number of pathways: 205 
+number of pathways: 211 
 
-  Significant pathways (p.value <= 0.01):
-               Number
-  equal.weight      5
-  in.degree         5
-  out.degree        7
-  betweenness       5
-  in.reach          6
-  out.reach         5
+Significant pathways (p.value <= 0.01):
+             Number
+equal.weight      6
+in.degree         6
+out.degree        7
+betweenness       5
+in.reach          7
+out.reach         7
 \end{Soutput}
 \end{Schunk}
 
 \begin{Schunk}
 \begin{Sinput}
-> plot(res, only.sig = TRUE, adj.method = "BH", cutoff = 0.15)
+> plot(res, only.sig = TRUE, adj.method = "BH", cutoff = 0.1)
 \end{Sinput}
 \end{Schunk}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{f8}
-\caption{Heatmap of p-values of significant pathways}\label{f8}
+\caption{Heatmap of FDRs of significant pathways}\label{f8}
 \end{center}
 \end{figure}
 
@@ -564,7 +618,7 @@ centrality from \texttt{res}.
 \begin{Soutput}
   procedure: gsa.univariate 
   weight: in.degree 
-  p-value: 0.002 
+  p-value: 9.990e-04 
 \end{Soutput}
 \begin{Sinput}
 > plot(g)
@@ -602,130 +656,49 @@ argument to \texttt{FALSE}.
 
 \end{Soutput}
 \begin{Sinput}
-> report(res, adj.method = "BH", cutoff = 0.15)
-> report(res, sig.only = FALSE)
+> report(res, adj.method = "BH", cutoff = 0.2)
+> report(res, only.sig = FALSE)
 \end{Sinput}
 \end{Schunk}
 
-An example of the report can be found in figure \ref{f10}.
+An example of the report can be found in figure \ref{f10}. After \texttt{CePa} version
+0.4, the network for pathways can be viewed interactively by Cytoscape Web \cite{Lopes15092010} (figure \ref{f11}).
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=0.7\textwidth]{f10}
+\includegraphics[width=0.8\textwidth]{f10}
 \caption{An report of the CePa analysis}\label{f10}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{f11}
+\caption{Network is visualized by Cytoscape Web}\label{f11}
 \end{center}
 \end{figure}
 
 \section{Parallel computing}
 Since \texttt{CePa} evaluates pathways independently, the process can be realized
 through parallel computing. In R statistical environment, there are many packages
-focusing on parallel computing such as \texttt{snow}, \texttt{multicore}, etc. Here
-we demonstrate how to apply the parallel version of \texttt{CePa}, taking \texttt{multicore}
-for example.
+focusing on parallel computing such as \texttt{snow}, \texttt{multicore}, etc. 
+After version 4.0, the package implemented a \texttt{cepa.all.parallel} function to do
+parallel computing.
+
+\texttt{cepa.all.parallel} use \texttt{snow} package.
+
+All the arguments for \texttt{cepa.all.parallel} are same as the arguments for \texttt{cepa.all}
+except the \texttt{ncores} arguments. The \texttt{ncores} specifies the number of cores for
+parallel computing.
 \begin{Schunk}
 \begin{Sinput}
-> library(multicore)
-> # identify how many cores you want to use in your computer
-> ncores = 4
+> res = cepa.all.parallel(dif = gene.list$dif, bk = gene.list$bk,
++       pc = PID.db$NCI, ncores = 4)
+> res = cepa.all.parallel(mat = eset, label = label, pc = PID.db$NCI,
+        glevel = "tvalue_sq", plevel = "mean", ncores = 4)
 \end{Sinput}
 \end{Schunk}
 
-Since there are a list of pathways, we would link to divide them into several approximately
-equal groups, so we have a \texttt{divide} function (maybe you have a better function like this).
-\begin{Schunk}
-\begin{Sinput}
-> divide = function(x, k) {
-+     if(length(x) ==1 && is.numeric(x)) {
-+         x = 1:x
-+     }
-+     if(length(x) < k) {
-+         stop("o")
-+     }
-+     w = floor(length(x)/k)
-+     q = length(x) - k*w
-+     d = matrix(0, nrow=k, ncol=2)
-+     n = 1
-+     for(i in 1:k) {
-+         d[i, 1] = n
-+         d[i, 2] = n+w-1+ifelse(q>0, 1, 0)
-+         n = d[i,2]+1
-+         q = ifelse(q > 0, q-1, 0)
-+     }
-+     d[k,2] = length(x)
-+     return(d)
-+ }
-\end{Sinput}
-\end{Schunk}
-
-In the \texttt{divide} function, the first argument is a vector, usually a index vector,
-and the second argument identify how many part you want to divide into. Also, the first argument
-can be a positive integer. For example, we want to divide \texttt{1:10} into two groups. 
-\begin{Schunk}
-\begin{Sinput}
-> divide(1:10, 2)
-\end{Sinput}
-\begin{Soutput}
-     [,1] [,2]
-[1,]    1    5
-[2,]    6   10
-\end{Soutput}
-\end{Schunk}
-
-The function returns a matrix. Rows correspond to groups and columns correspond to the start index
-and the end index. If the vector can not be divided equally, the function would return an
-approximately division.
-\begin{Schunk}
-\begin{Sinput}
-> divide(1:10, 3)
-\end{Sinput}
-\begin{Soutput}
-     [,1] [,2]
-[1,]    1    4
-[2,]    5    7
-[3,]    8   10
-\end{Soutput}
-\end{Schunk}
-
-Now we can divide the complete NCI pathway catalogue into several groups.
-\begin{Schunk}
-\begin{Sinput}
-> NCI = PID.db$NCI
-> d = divide(1:length(NCI$pathList), ncores)
-\end{Sinput}
-\end{Schunk}
-
-Then we use \texttt{mclapply} which is something like a parallel version of \texttt{lapply}
-to do parallele computing.
-\begin{Schunk}
-\begin{Sinput}
-> res = mclapply(1:ncores, function(i) {
-+         pc = NCI
-+         pc$pathList = pc$pathList[d[i, 1]:d[i, 2]]
-+         cepa.all(dif = dif, bk = bk, pc = pc)},
-+         mc.cores = ncores)
-> res = mclapply(1:ncores, function(i) {
-+         pc = set.pathway.catalogue(pathList = PID.db$NCI$pathList[d[i, 1]:d[i, 2]],
-                 interactionList = PID.db$NCI$interactionList,
-                 mapping = PID.db$NCI$mapping)
-+         cepa.all(mat = eset, label = label, pc = pc)},
-+         mc.cores = ncores)
-\end{Sinput}
-\end{Schunk}
-
-In the \texttt{mclapply}, calculation in each core would returns a \texttt{cepa.all} object.
-Thus, \texttt{res} is a list of \texttt{cepa.all} objects. We need some code to transform it
-into a single \texttt{cepa.all} object containing all pathways.
-\begin{Schunk}
-\begin{Sinput}
-> obj = list()
-> for(i in 1:length(res)) {
-+     obj = c(obj, res[[i]])
-+ }
-> class(obj) = "cepa.all"
-\end{Sinput}
-\end{Schunk}
-
-OK, now the \texttt{obj} is a \texttt{cepa.all} object just like the one generated from non-parallel
-\texttt{CePa}.
+The returned value \texttt{res} is a \texttt{cepa.all} class object.
 
 \bibliographystyle{abbrv}
 \bibliography{bibliography}

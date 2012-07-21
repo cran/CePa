@@ -6,6 +6,9 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
 	    dir.path = paste("cepa.report", gsub("[ :]", "-", as.character(Sys.time())), sep=".")
     }
 	dir.create(dir.path, showWarnings=FALSE)
+	
+	file.copy(paste(system.file(package = "CePa"), "/extdata/js", sep=""), dir.path, recursive = TRUE)
+	file.copy(paste(system.file(package = "CePa"), "/extdata/swf", sep=""), dir.path, recursive = TRUE)
     
     f1.path = paste(dir.path, "/f1.png", sep="")
     png(f1.path, width=800, height=200)
@@ -26,6 +29,7 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
 
     # generate images for each pathway
     dir.create(paste(dir.path, "/image", sep=""), showWarnings=FALSE)
+    dir.create(paste(dir.path, "/xml", sep=""), showWarnings=FALSE)
     cen = names(x[[1]])
     pathway.name = names(x)
     for(i in 1:length(pathway.name)) {
@@ -35,13 +39,15 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
                 for(ce in cen) {
                     image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-graph.png", sep="")
                     png(image.path, width=800, height=750)
-                    plot(x, pathway.name[i], ce, ...)
+                    gg = plot(x, pathway.name[i], ce, ...)
                     dev.off()
                     
                     image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-null.png", sep="")
                     png(image.path, width=800, height=500)
                     plot(x, pathway.name[i], ce, type="null", ...)
                     dev.off()
+					
+					write.graph(gg, file = paste(dir.path, "/xml/", pathway.name[i], "-", ce, ".xml", sep=""), format = "graphml")
                 }
             }
         }
@@ -50,13 +56,15 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
             for(ce in cen) {
                 image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-graph.png", sep="")
                 png(image.path, width=1200, height=800)
-                plot(x, pathway.name[i], ce, ...)
+                gg = plot(x, pathway.name[i], ce, ...)
                 dev.off()
                 
                 image.path = paste(dir.path, "/image/", pathway.name[i], "-", ce, "-null.png", sep="")
                 png(image.path, width=1000, height=500)
                 plot(x, pathway.name[i], ce, type="null", ...)
                 dev.off()
+				
+				write.graph(gg, file = paste(dir.path, "/xml/", pathway.name[i], "-", ce, ".xml", sep=""), format = "graphml")
             }
         }
     }
@@ -137,7 +145,7 @@ table.content = function(x, adj.method="none", cutoff = ifelse(adj.method == "no
             }
             
             if(l[i] || only.sig == FALSE) {
-                p.text[i, j] = paste("<td><a href='#' onclick=\"getGraph('", pathway.name[i], "', '", cen[j], "');return false;\" />", p.text[i, j], "</a></td>", sep = "")
+                p.text[i, j] = paste("<td><a href='#' onclick=\"getGraph('", pathway.name[i], "', '", cen[j], "');return false;\" >", p.text[i, j], "</a></td>", sep = "")
             }
             else {
                 p.text[i, j] = paste("<td>", p.text[i, j], "</td>", sep = "")

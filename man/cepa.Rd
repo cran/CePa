@@ -1,9 +1,8 @@
 \name{cepa}
 \alias{cepa}
-\title{Access the significance of a pathway}
+\title{Apply CePa algorithm on a single pathway}
 \description{
-Using network centrality as weight to access the significance of a pathway.
-Pathway nodes are taken as network units instead of genes.
+Apply CePa algorithm on a single pathway
 }
 \usage{
 cepa(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, pathway = NULL, id = NULL, cen = "equal.weight",
@@ -15,7 +14,7 @@ cepa(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, pathway = NULL, id = N
   \item{bk}{background gene list}
   \item{mat}{expression matrix in which rows are genes and columns are samples}
   \item{label}{a \link{sampleLabel} object identify the design of the microarray experiment}
-  \item{pc}{a pathway.catalogue object storing information of pathways}
+  \item{pc}{a \link{pathway.catalogue} object storing information of pathways}
   \item{pathway}{an \link[igraph]{igraph} object or edge list}
   \item{id}{identify which pathway should be analysis in the pathway catalogue}
   \item{cen}{centrality measuments, it can ce a string, or function has been quote}
@@ -35,6 +34,9 @@ of over-representation analysis (ORA) will be applied on the list of differentia
 If \code{mat}, \code{label}, \code{pc}, \code{pathway}, \code{id}, \code{cen}, \code{cen.name}, \code{glevel},
 \code{plevel} and \code{iter} are specified, the arguments are passed to \link{cepa.univariate}.
 The centrality-extension of gene-set analysis (GSA) will be applied on the whole gene expressions.
+
+This function is always called by \code{\link{cepa.all}}. But you can still use it
+if you want to analysis a single pathway under a specific centrality.
 }
 
 \value{

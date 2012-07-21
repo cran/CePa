@@ -12,7 +12,7 @@ cepa.univariate.all(mat, label, pc, cen = default.centralities,
 \arguments{
   \item{mat}{expression matrix in which rows are genes and columns are samples}
   \item{label}{a \link{sampleLabel} object identify the design of the microarray experiment}
-  \item{pc}{a pathway.catalogue object storing information of pathways}
+  \item{pc}{a \link{pathway.catalogue} object storing information of pathways}
   \item{cen}{centrality measuments, it can ce a string, or function has been quote}
   \item{cen.name}{centrality measurement names}
   \item{glevel}{gene level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs"}
@@ -30,14 +30,20 @@ pathway and calculates the pathway level statistic directly from the expression
 value matrix using Hotelling's T^2 test or MANOVA models. The function implement
 univariate procedure of GSA with network centralities.
 
+If users use the \link{PID.db} data, all genes should be formatted in gene symbol.
+
 If the centrality measurement is set as a string, only pre-defined "equal.weight",
 "in.degree", "out.degree", "degree", "betweenness", "in.reach", "out.reach",
 "reach", "in.spread", "out.spread" and "spread" are allowed. More centrality
 measurements can be used by setting it as a function (such as closeness,
-cluster coefficient). In the cepa.all function, we recommand users choose
-at least two centrality measurements.
+cluster coefficient). In the function, we recommand users choose
+at least two centrality measurements. The default centralities are "equal.weight",
+"in.degree", "out.degree", "betweenness", "in.reach" and "out.reach".
 
 However, in most circumstance, the function is called by \link{cepa.all}.
+
+We are sorry that only the univariate procedures in GSA are extended. We are still
+trying to figure out the extension for the multivariate procedures in GSA.
 }
 \value{
     A \code{cepa.all} class object
@@ -52,7 +58,7 @@ However, in most circumstance, the function is called by \link{cepa.all}.
 data(PID.db)
 
 # GSA extension
-# P53_symbol.gct and P53_cls can be downloaded from
+# P53_symbol.gct and P53.cls can be downloaded from
 # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
 eset = read.gct("P53_symbol.gct")
 label = read.cls("P53.cls", treatment="MUT", control="WT")

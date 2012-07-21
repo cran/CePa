@@ -10,10 +10,6 @@ read.gct(file)
 \arguments{
   \item{file}{gct file path}
 }
-\value{
-A matrix of the expression values, with rows correponding to genes and cols to
-samples.
-}
 \details{
 The GCT format is a tab delimited file format that stores the expression value matrix.
 The first line of the file is the version number which always be #1.2.
@@ -21,9 +17,13 @@ The second line is the number of the size of genes and samples,
 seperated by space, usually for the initiation of reading the expression matrix.
 The third line contains a list of identifiers for the samples associated 
 with each of the columns in the remainder of the file.
-From the fourth line will be the expression value of each probes. 
+From the fourth line will be the expression value of each gene. 
 
 GCT file is used together with CLS file.
+}
+\value{
+A matrix of the expression values, with rows correponding to genes and cols to
+samples.
 }
 \source{\url{http://www.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats}}
 \author{Zuguang Gu}
@@ -35,7 +35,7 @@ GCT file is used together with CLS file.
 # expression data stored in a gct format file
 # P53_symbol.gct can be downloaded from
 # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
-eset = read.gct("P53_symbol.gct")
+eset = read.gct("http://mcube.nju.edu.cn/jwang/lab/soft/cepa/P53_symbol.gct")
 
 head(eset)
 }

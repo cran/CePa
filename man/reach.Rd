@@ -23,7 +23,7 @@ length of the shortest path from node w to node v.
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{eccentricity}}, \code{\link{spread}}, \code{\link{radiality}}
+\code{\link{spread}}, \code{\link{radiality}}
 }
 \examples{
 require(igraph)

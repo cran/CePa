@@ -11,7 +11,7 @@ cepa.ora.all(dif, pc, bk = NULL, cen = default.centralities,
 }
 \arguments{
   \item{dif}{differential gene list}
-  \item{pc}{a pathway.catalogue class object}
+  \item{pc}{a \link{pathway.catalogue} class object}
   \item{bk}{background gene list}
   \item{cen}{centrality measuments, it can ce a string, or function has been quote}
   \item{cen.name}{centrality measurement names}
@@ -27,14 +27,16 @@ extend traditional ORA with network centralities.
 
 The differential gene list and the background gene list should be indicated
 with the same identifiers (e.g. gene symbol or refseq ID). All genes in
-the differential gene list should exist in the background gene list.
+the differential gene list should exist in the background gene list. If users 
+use the \link{PID.db} data, all genes should be formatted in gene symbol.
 
 If the centrality measurement is set as a string, only pre-defined "equal.weight",
 "in.degree", "out.degree", "degree", "betweenness", "in.reach", "out.reach",
 "reach", "in.spread", "out.spread" and "spread" are allowed. More centrality
 measurements can be used by setting it as a function (such as closeness,
-cluster coefficient). In the cepa.all function, we recommand users choose
-at least two centrality measurements.
+cluster coefficient). In the function, we recommand users choose
+at least two centrality measurements. The default centralities are "equal.weight",
+"in.degree", "out.degree", "betweenness", "in.reach" and "out.reach".
 
 However, in most circumstance, the function is called by \link{cepa.all}.
 }

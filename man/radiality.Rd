@@ -18,7 +18,7 @@ n is the size of the network.
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{spread}}, \code{\link{reach}}, \code{\link{radiality}}
+\code{\link{spread}}, \code{\link{reach}}
 }
 \examples{
 require(igraph)

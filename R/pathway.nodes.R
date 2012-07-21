@@ -11,6 +11,6 @@ pathway.nodes = function(pathway) {
         return(name)
     }
     else {
-        return(0:(n-1))
+        return(1:n)
     }
 }

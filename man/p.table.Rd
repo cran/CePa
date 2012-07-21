@@ -10,12 +10,16 @@ p.table(x)
 \arguments{
   \item{x}{a \link{cepa.all} object}
 }
+\details{
+Since the p-values for each pathway are calculated for several centralities, the
+whole p-values are represented as a table.
+}
 \value{
 A data matrix where rows are pathways and columns are centralities.
 }
 \author{Zuguang Gu}
 \seealso{
-\code{\link{cepa}}
+\code{\link{cepa.all}}
 }
 \examples{
 \dontrun{

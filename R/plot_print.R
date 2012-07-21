@@ -326,8 +326,7 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
         #v.shape[complex.id] = "square"
         
         v.frame.color = "white"
-    }
-    else {    
+    } else {    
         if(x$framework == "gsa.univariate") {
             v.color = get_color(node.level, colors = c("#91CF60", "#EEEEEE", "#E41A1C"), fc = c(-3, 0, 3), gradient = function(x) x^2)
         } else {
@@ -366,8 +365,7 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
     # label
     if(is.null(node.name)) {
         v.label = x$node.name
-    }
-    else {
+    }    else {
         v.label = node.name
         v.label = gsub("/", "\n", v.label)
     }
@@ -378,15 +376,13 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
     V(pathway)$label = v.label
     V(pathway)$frame.color = v.frame.color
     V(pathway)$label.cex = 0.8
-    V(pathway)$label.font = 2
     V(pathway)$label.color = "black"
     E(pathway)$arrow.size = 0.5
     #E(pathway)$color = "#CCCCCC"
     
     if(is.null(graph.layout.method)) {
-        layout.method = layout.reingold.tilford
-    }
-    else {
+        layout.method = function(x) layout.reingold.tilford(x, mode = "all")
+    }    else {
         layout.method = graph.layout.method
     }
     
@@ -394,7 +390,7 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
     
     if(is.null(node.type)) {
         if(is.ora(x)) {
-            legend(-0.15, -0.05, c("diff nodes", "non-diff nodes", "non-protein nodes"),
+            legend(0, 0, c("diff nodes", "non-diff nodes", "non-protein nodes"),
                    col=c("#F18C8D", "#C8E7AF", "#3288BD"), pch=c(16,16,15), pt.cex=2, yjust=0, cex=0.8)
         } else {
             e = seq(-4, 4, by=0.5)
@@ -412,13 +408,12 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
             text((startx+endx)/2, 0.05, "nodes t-value", cex=0.8, adj=c(0.5, -1))
             rect(startx-0.04, -0.05, endx+0.04, 0.15, border=TRUE)
             
-            legend(-0.15, -0.05, c("non-protein nodes"),
+            legend(0, 0, c("non-protein nodes"),
                    col=c(rgb(50, 136, 189, maxColorValue = 255)), pch=c(16,16,15), pt.cex=2, yjust=0, cex=0.8)
         }
-    }
-    else {
+    } else {
         if(is.ora(x)) {
-            legend(-0.15, -0.05, c("diff nodes", "non-diff nodes", "complex", "family", "subunit", "compound", "rna"),
+            legend(0, 0, c("diff nodes", "non-diff nodes", "complex", "family", "subunit", "compound", "rna"),
                    col=c("#F18C8D", "#C8E7AF",
                          rgb(228, 26, 28, maxColorValue = 255),
                          rgb(55, 126, 184, maxColorValue = 255),
@@ -429,8 +424,8 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
         } else {
             e = seq(-4, 4, by=0.5)
             color = get_color(e, colors = c("#91CF60", "#EEEEEE", "#E41A1C"), fc = c(-3, 0, 3), gradient = function(x) x^2)
-            startx = 0.9
-            endx = 1.1
+            startx = 0.8
+            endx = 1
             for(i in 1:length(e)) {
                 x_left = startx + (i-1)*(endx - startx)/length(e)
                 x_right = startx + (i)*(endx - startx)/length(e)
@@ -442,7 +437,7 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
             text((startx+endx)/2, 0.05, "nodes t-value", cex=0.8, adj=c(0.5, -1))
             rect(startx-0.04, -0.05, endx+0.04, 0.15, border=TRUE)
                 
-            legend(-0.15, -0.05, c("complex", "family", "subunit", "compound", "rna"),
+            legend(0, 0, c("complex", "family", "subunit", "compound", "rna"),
                    col=c(rgb(228, 26, 28, maxColorValue = 255),
                          rgb(55, 126, 184, maxColorValue = 255),
                          rgb(152, 78, 163, maxColorValue = 255),
@@ -475,10 +470,18 @@ plot.igraph2 = function(g, layout.method = layout.random, ...) {
     
     ly = layout.method(g)
     r1 = max(ly[, 1]) - min(ly[, 1])
-    ly[, 1] = (ly[, 1] - min(ly[, 1]))/r1
-    r2 = max(ly[, 2]) - min(ly[, 2])
-    ly[, 2] = (ly[, 2] - min(ly[, 2]))/r2
-    rownames(ly) = pathway.nodes(g)
+	if(r1 == 0) {
+		ly[, 1] = 0.5
+	} else { 
+		ly[, 1] = (ly[, 1] - min(ly[, 1]))/r1
+    }
+	r2 = max(ly[, 2]) - min(ly[, 2])
+	if(r2 == 0) {
+		ly[, 2] = 0.5
+	} else {
+		ly[, 2] = (ly[, 2] - min(ly[, 2]))/r2
+    }
+	rownames(ly) = pathway.nodes(g)
     # points
     plot(ly, cex = v.size,
              col = v.color,
@@ -502,9 +505,9 @@ plot.igraph2 = function(g, layout.method = layout.random, ...) {
                                               
     # edges
     el = get.edgelist(g)
-    from = ly[el[, 1], ]
+    from = ly[el[, 1], ,drop=FALSE]
     from.node = rownames(from)
-    to = ly[el[, 2], ]
+    to = ly[el[, 2], ,drop=FALSE]
     to.node = rownames(to)
     new.from = matrix(0, nrow=dim(from)[1], ncol=2)
     new.to = matrix(0, nrow=dim(to)[1], ncol=2)

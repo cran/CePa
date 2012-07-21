@@ -21,6 +21,10 @@ cepa.ora(dif, pc, bk = NULL, pathway = NULL, id = NULL, cen = "equal.weight",
   if the \code{cen} is a function. }
   \item{iter}{number of simulations}
 }
+\details{
+The function is always called by \code{\link{cepa.ora.all}}. But you can still
+use it if you realy want to analysis just one pathway under one centrality.
+}
 \value{
 A \code{cepa} class object
 }

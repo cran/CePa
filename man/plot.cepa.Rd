@@ -13,13 +13,13 @@ Plot the cepa object
   \item{...}{arguments passed to \code{\link{plotGraph}}}
 }
 \details{
-The function is wrapper of \link{plotGraph} and \link{plotNull}.
-If type is specified to "graph", the graph of the network will be plotted.
+The function is wrapper of \code{\link{plotGraph}} and \code{\link{plotNull}}.
+If type is specified to "graph", the graph of the network will be plotted (see \link{plotGraph} for details).
 If type is specified to "null", the null distribution of the pathway score
-in the pathway will be plotted.
+in the pathway will be plotted (see \link{plotNull} for details).
 }
 \value{
-if type is set to "graph", the function will return a \link[igraph]{igraph} object of the pathway.
+if type is set to "graph", the function will return a \link[igraph]{igraph} object of the pathway. Else it is NULL.
 }
 \author{Zuguang Gu}
 \seealso{

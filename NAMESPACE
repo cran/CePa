@@ -1,5 +1,6 @@
 export (
 	cepa.all,
+	cepa.all.parallel,
 	cepa.ora.all,
 	cepa.univariate.all,
 	cepa,
@@ -18,7 +19,6 @@ export (
 	reach,
 	report,
 	spread,
-	eccentricity,
 	radiality,
 	set.pathway.catalogue,
 	print.pathway.catalogue,

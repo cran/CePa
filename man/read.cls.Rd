@@ -33,8 +33,8 @@ A \code{sampleLabel} class object
 }
 \examples{
 \dontrun{
-# P53_cls can be downloaded from
+# P53.cls can be downloaded from
 # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
-label = read.cls("P53.cls", treatment="MUT", control="WT")
+label = read.cls("http://mcube.nju.edu.cn/jwang/lab/soft/cepa/P53.cls", treatment="MUT", control="WT")
 }
 }

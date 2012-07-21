@@ -12,6 +12,10 @@ sampleLabel(label, treatment, control)
   \item{treatment}{treatment label}
   \item{control}{control label}
 }
+\details{
+Since sample label will not be modified in the analysis, this function is used to
+integrate all the label information in one single data object.
+}
 \value{
 A \code{sampleLabel} class object
 }
