@@ -1,5 +1,5 @@
 # p values of all pathways
-p.table = function(x) {
+p.table = function(x, adj.method = NA, cutoff = ifelse(adj.method == "none", 0.01, 0.05)) {
 
     if(class(x) != "cepa.all") {
         stop("x should be cepa.all object.\n")
@@ -13,6 +13,12 @@ p.table = function(x) {
 
     rownames(p.value) = names(x)
     colnames(p.value) = names(x[[1]])
+    
+    if(!is.na(adj.method)) {
+        p.value = apply(p.value, 2, p.adjust, adj.method)
+        l = apply(p.value, 1, function(x) { sum(x <= cutoff) > 0})
+        p.value = p.value[l, , drop=FALSE]
+    }
     
     return(p.value)
 }

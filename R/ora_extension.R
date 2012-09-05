@@ -11,8 +11,8 @@ cepa.ora.all = function(dif, pc, bk = NULL, cen = default.centralities,
         bk = read.table(paste(dir, "/extdata/bk.genome", sep=""), quote = "", stringsAsFactors = FALSE)[[1]]
         cat("Background gene list is not specified, use whole human genome instead.\n")
     }
-	
-	dif = dif[dif %in% bk]
+    
+    dif = dif[dif %in% bk]
     
     if(length(cen) < 1) {
         stop("cen argument must be specified.\n")
@@ -22,7 +22,6 @@ cepa.ora.all = function(dif, pc, bk = NULL, cen = default.centralities,
     # because we need the function name
     for(ce in cen) {
         if(is.function(ce)) {
-            ce = unlist(ce)
             stop("Functions cannot be used directly because we need the function name, use quote or substitute.\n")
         }
     }
@@ -70,7 +69,6 @@ cepa.ora.all = function(dif, pc, bk = NULL, cen = default.centralities,
         j = 0
         # to this pathway, applying various centralities
         for(ce in cen) {
-            ce = unlist(ce)   # cen argument may be mixed with strings and functions
             j = j + 1
             pathway.result[[i]][[j]] = cepa.ora(dif = dif, bk = bk, pathway = pathway, pc = pc, cen = ce, iter = iter)
             cat("      - ", ce, ": ", round(pathway.result[[i]][[j]]$p.value, 3), "\n", sep = "")

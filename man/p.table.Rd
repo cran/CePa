@@ -5,14 +5,18 @@
 Table of p-values of pathways
 }
 \usage{
-p.table(x)
+p.table(x, adj.method = NA, cutoff = ifelse(adj.method == "none", 0.01, 0.05))
 }
 \arguments{
   \item{x}{a \link{cepa.all} object}
+  \item{adj.method}{methods in \link[stats]{p.adjust}, available methods are "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"}
+  \item{cutoff}{cutoff for significance}
 }
 \details{
 Since the p-values for each pathway are calculated for several centralities, the
 whole p-values are represented as a table.
+
+Also it can extract significant pathways only.
 }
 \value{
 A data matrix where rows are pathways and columns are centralities.
@@ -30,6 +34,7 @@ data(gene.list)
 # will spend about 20 min
 res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
 p.table(res.ora)
+p.table(res.ora, adj.method = "BH")
 
 # GSA extension
 # P53_symbol.gct and P53_cls can be downloaded from

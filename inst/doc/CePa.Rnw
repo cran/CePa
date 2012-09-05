@@ -87,7 +87,7 @@ The Perl code for parsing can be obtained from the author's website
 (http://mcube.nju.edu.cn/jwang/lab/soft/cepa/). The pathway data is stored
 in \texttt{PID.db}. Note only part of pathways in the XML file are listed on the PID website. Also, 
 we have set the minimum and maximum connected nodes when extracting pathways 
-from PID, so not all the pathways listed on the PID website are in PID.db.
+from PID, so not all the pathways listed on the PID website are in \texttt{PID.db}.
 \begin{Schunk}
 \begin{Sinput}
 > library(CePa)
@@ -283,7 +283,36 @@ not specified, the function use whole human genome genes as default.
 By default, \texttt{cepa.all} calls \texttt{equal.weight}, \texttt{in.degree}, \texttt{out.degree},
 \texttt{betweenness}, \texttt{in.reach} and \texttt{out.reach} centralities as pathway nodes' weight.
 More centrality measurements can be used by setting it as a function (such as closeness,
-cluster coefficient).
+cluster coefficient). The non-default centralities can be set by \texttt{cen} argument, and remember
+to set the \texttt{cen.name} argument to get the name of the centrality. Note you can mix the centralities
+in string format and function format. When you set the function object, the only parameter for the
+function is the network in \texttt{igraph} object format. The following codes are examples to set the centralities.
+\begin{Schunk}
+\begin{Sinput}
+> # if you use the function, you should quote the function
+> # because we need the function name as the centrality name
+> cepa.all(dif = gene.list$dif, bk = gene.list$bk,
++          pc = PID.db$NCI,
++          cen = list("in.degree", quote(closeness)))
+\end{Sinput}
+\end{Schunk}
+
+Moreover, if your centrality function contains more than one argument, you must
+wrap to a function that only have one \texttt{igraph} object argument.
+\begin{Schunk}
+\begin{Sinput}
+> in.closeness = function(g) closeness(g, mode = "in")
+> cepa.all(dif = gene.list$dif, bk = gene.list$bk,
++          pc = PID.db$NCI,
++          cen = list("in.degree", quote(in.closeness)))
+> # If you don't like the function name to be centrality name
+> # you can set by cen.name argument
+> cepa.all(dif = gene.list$dif, bk = gene.list$bk,
++          pc = PID.db$NCI,
++          cen = list("in.degree", quote(in.closeness)),
++          cen.name = c("In-degree", "In-closeness"))
+\end{Sinput}
+\end{Schunk}
 
 In order to generate the null distribution of the pathway score, novel differential
 gene list is sampled from the background gene list. P-values are calculated from 1000 simulations by default.
@@ -472,7 +501,8 @@ index of the centrality (Figure \ref{f6}).
 
 If users use \texttt{plot} to draw network graphs, the function would return an
 \texttt{igraph} object. So if users are not satisfy with the default graph, they
-can visulize by their own methods.
+can visulize by their own methods. An example of custumize your network can be found
+at the next section.
 \begin{Schunk}
 \begin{Sinput}
 > obj = plot(res, id = "mapktrkpathway", cen = "in.reach")
@@ -546,7 +576,7 @@ code spent about 38 min with 1000 sample permutations.
 \begin{Schunk}
 \begin{Sinput}
 > res = cepa.all(mat = eset, label = label, pc = PID.db$NCI,
-+                glevel = "tvalue_sq", plevel = "mean")
++                nlevel = "tvalue_sq", plevel = "mean")
 \end{Sinput}
 \begin{Soutput}
   Calculate gene level values.
@@ -575,6 +605,38 @@ the default node level method because it can capture two directional regulations
 After we get the node level statistics in the pathway, a pathway level transformation
 should be applied. User can choose from \texttt{max}, \texttt{min}, \texttt{median}, 
 \texttt{sum}, \texttt{mean} and \texttt{rank}. \texttt{mean} is taken as default.
+
+The node level statistic can be self-defined. The self-defined function should only
+contain two argumetns, one for vector of expression value in treatment class and one
+for that in control class. E.g. we set the node level statistic as kind of robust t-value:
+\begin{Schunk}
+\begin{Sinput}
+> robust_tvalue = function(x, y) {
++    qx = quantile(x, c(0.1, 0.9))
++    qy = quantile(y, c(0.1, 0.9))
++
++    x = x[(x <= qx[2]) & (x >= qx[1])]
++    y = y[(y <= qy[2]) & (y >= qy[1])]
++
++    n1 = length(x)
++    n2 = length(y)
++    v1 = var(x)
++    v2 = var(y)
++    ifelse(v1 + v2 == 0, 0, (mean(x) - mean(y)) / sqrt(v1/n1 + v2/n2))
++ }
+> res = cepa.all(mat = eset, label = label, pc = PID.db$NCI,
++                nlevel = robust_tvalue, plevel = "mean")
+\end{Sinput}
+\end{Schunk}
+
+Similarly, the pathway level transformation can also be self-defined:
+\begin{Schunk}
+\begin{Sinput}
+> trim_mean = function(x) mean(x, trim = 0.2)
+> res = cepa.all(mat = eset, label = label, pc = PID.db$NCI,
++                nlevel = "tvalue_abs", plevel = trim_mean)
+\end{Sinput}
+\end{Schunk}
 
 Print the general result of the analysis and plot figures (figure \ref{f8}).
 \begin{Schunk}
@@ -607,12 +669,12 @@ out.reach         7
 \end{center}
 \end{figure}
 
-If we are instread in p73 pathway. First we extract this pathway under "in.degree"
+If we are instread in p53 downstream pathway. First we extract this pathway under "in.degree"
 centrality from \texttt{res}.
 
 \begin{Schunk}
 \begin{Sinput}
-> g = get.cepa(res, id = "p73pathway", cen="in.degree")
+> g = get.cepa(res, id = "p53downstreampathway", cen="in.degree")
 > g
 \end{Sinput}
 \begin{Soutput}
@@ -631,9 +693,29 @@ centrality from \texttt{res}.
 \end{center}
 \end{figure}
 
-Figure \ref{f9} illustrates the graph of p73 pathway. Since the pathway is evaluated
+Figure \ref{f9} illustrates the graph of p53 downstream pathway. Since the pathway is evaluated
 under GSA procedure, the color of each node is continues in which red refers to up-regulated,
 green refers to down-regulated and white refers to no-change.
+
+Maybe due to to many nodes in the graph, Figure \ref{f9} is really hard to read.
+However, since the plotting function returns an \texttt{igraph} object. We can customize
+it handly (Figure \ref{f12}).
+\begin{Schunk}
+\begin{Sinput}
+> g2 = plot(g)
+> # only label those nodes with high centralities
+> V(g2)$label[V(g2)$size < quantile(V(g2)$size, 0.95)] = ""
+> # we do not need margins
+> par(mar = c(0,0,0,0))
+> plot(g2)
+\end{Sinput}
+\end{Schunk}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.99\textwidth]{f12}
+\caption{customize the network graph}\label{f12}
+\end{center}
+\end{figure}
 
 \section{The \texttt{report} function}
 One of the advantages of \texttt{CePa} package is that it can generate a detailed
@@ -694,7 +776,7 @@ parallel computing.
 > res = cepa.all.parallel(dif = gene.list$dif, bk = gene.list$bk,
 +       pc = PID.db$NCI, ncores = 4)
 > res = cepa.all.parallel(mat = eset, label = label, pc = PID.db$NCI,
-        glevel = "tvalue_sq", plevel = "mean", ncores = 4)
+        nlevel = "tvalue_sq", plevel = "mean", ncores = 4)
 \end{Sinput}
 \end{Schunk}
 

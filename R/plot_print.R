@@ -25,8 +25,8 @@ plot.cepa.all = function(x, id = NULL, cen = 1, type = c("graph", "null"),
         plot(get.cepa(x, id, cen), type = type, node.name = node.name, node.type = node.type, ...)
 
     } else {    
-	    p.heatmap(x, adj.method = adj.method, only.sig = only.sig, cutoff = cutoff)
-	}
+        p.heatmap(x, adj.method = adj.method, only.sig = only.sig, cutoff = cutoff)
+    }
 }
 
 
@@ -45,8 +45,8 @@ p.heatmap = function(x, adj.method = "none", only.sig = TRUE,
         colnames(p.foo) = colnames(p.value)
         p.value = p.foo
     }
-	p.value = p.foo
-	
+    p.value = p.foo
+    
     np = ncol(p.value)
     
     if(only.sig) {
@@ -54,7 +54,7 @@ p.heatmap = function(x, adj.method = "none", only.sig = TRUE,
         p.value = p.value[l, , drop=FALSE]
         if(sum(l) == 0) {
             plot(1,1, axes=FALSE, ann=FALSE, type="n")
-			text(1,1,"No significant pathway!", cex=2)
+            text(1,1,"No significant pathway!", cex=2)
             return(invisible(NULL))
         }
     }
@@ -80,8 +80,7 @@ p.heatmap = function(x, adj.method = "none", only.sig = TRUE,
                      c(5, 0)),
                widths=c(7,lcm(3.5)),
                heights=c(1.5,5,max.length/4))
-    }
-    else {
+    } else {
         layout(rbind(c(1, 2),
                      c(3, 4)),
                widths=c(7,lcm(3.5)),
@@ -93,8 +92,7 @@ p.heatmap = function(x, adj.method = "none", only.sig = TRUE,
     plot(0, 0, type="n", axes=FALSE, ann=FALSE)
     if(only.sig) {
         text(0, 0, paste("Heatmap of ", ifelse(adj.method=="none", "p-value", "FDR"),"s of pathways (only significant)", sep=""), cex=1.5)
-    }
-    else {
+    } else {
         text(0, 0, paste("Heatmap of ", ifelse(adj.method=="none", "p-value", "FDR"),"s of pathways", sep=""), cex=1.5)
     }
     
@@ -174,9 +172,9 @@ get_color = function(x,
             col_num = (value - fc[2])*(col_MEDIAN - col_MAX)/(fc[2] - fc[3]) + col_MEDIAN
         }
         
-		col_num = as.integer(col_num)
+        col_num = as.integer(col_num)
         col_num[col_num > 255] = 255
-		col_num[col_num < 0] = 0
+        col_num[col_num < 0] = 0
         
         color[i] = rgb(col_num[1], col_num[2], col_num[3], maxColorValue = 255, ...)
     }
@@ -247,26 +245,20 @@ plotNull = function(x) {
     par(mfrow = c(1, 2))
     
     # figure A
-    mar = c(5.1, 4.1, 4.1, 2.1)
-    par(mar = mar+c(0, 0, 0, -2))
     xrange = range(c(s.random, s))
     yrange = range(c(as.vector(ds.random), ds))
     if(yrange[1] == yrange[[2]]) {
         yrange = sort(c(0, 2*yrange[1]))
     }
-    matplot(jitt(s.random, xrange), jitt(ds.random, yrange), xlim = xrange, ylim = yrange, col=color, pch=20, cex=0.2, xlab = "Simulated score", ylab="Centrality", main = paste("(A) Distribution of", centrality, "centrality\nin the pathway under simulation"))
+    matplot(jitt(s.random, xrange), jitt(ds.random, yrange), xlim = xrange, ylim = yrange, col=color, pch=20, cex=0.2, xlab = "Simulated score", ylab=ifelse(x$framework == "ora.univariate", "Centrality", "Node-level scores"), main = ifelse(x$framework == "ora", paste("(A) Distribution of", centrality, "of differential nodes\nin pathway under simulation"), paste("(A) Distribution of node-level scores\nweighted by", centrality, "centrality")))
     points(rep(s, 4), jitt(ds, yrange), col=color, pch=20, cex=5)
     legend(min(xrange), max(yrange), colnames(ds.random), col=color, pch=20, pt.cex=2)
     abline(v = s, col="red", lwd = 2)
-    par(mar=mar)
 
     # figure C
-    mar = c(5.1, 4.1, 4.1, 2.1)
-    par(mar = mar+c(0, 0, 0, -2))
     hist(s.random, freq = FALSE, xlim = range(c(s.random, s)), breaks = 50, xlab = "Simulated score", main = paste("(B) Histogram of simulated scores in the pathway\nusing", centrality, "centrality as weight"))
     box()
     abline(v = s, col = "red", lwd = 2)
-    par(mar=mar)
     
     par(opar)
 }
@@ -470,18 +462,18 @@ plot.igraph2 = function(g, layout.method = layout.random, ...) {
     
     ly = layout.method(g)
     r1 = max(ly[, 1]) - min(ly[, 1])
-	if(r1 == 0) {
-		ly[, 1] = 0.5
-	} else { 
-		ly[, 1] = (ly[, 1] - min(ly[, 1]))/r1
+    if(r1 == 0) {
+        ly[, 1] = 0.5
+    } else { 
+        ly[, 1] = (ly[, 1] - min(ly[, 1]))/r1
     }
-	r2 = max(ly[, 2]) - min(ly[, 2])
-	if(r2 == 0) {
-		ly[, 2] = 0.5
-	} else {
-		ly[, 2] = (ly[, 2] - min(ly[, 2]))/r2
+    r2 = max(ly[, 2]) - min(ly[, 2])
+    if(r2 == 0) {
+        ly[, 2] = 0.5
+    } else {
+        ly[, 2] = (ly[, 2] - min(ly[, 2]))/r2
     }
-	rownames(ly) = pathway.nodes(g)
+    rownames(ly) = pathway.nodes(g)
     # points
     plot(ly, cex = v.size,
              col = v.color,

@@ -9,46 +9,33 @@ centrality = function(graph, method="equal.weight") {
     
     if(is.function(method)) {
         return(method(graph))
-    }
-    else if(mode(method) == "name") {
+    } else if(mode(method) == "name") {
         method = eval(method)
         return(method(graph))
-    }
-    else if(method == "equal.weight") {
+    } else if(method == "equal.weight") {
         return(rep(1, vcount(graph)))
-    }
-    else if(method == "in.degree") {
+    } else if(method == "in.degree") {
         return(degree(graph, mode="in"))
-    }
-    else if(method == "out.degree") {
+    } else if(method == "out.degree") {
         return(degree(graph, mode="out"))
-    }
-    else if(method == "degree") {
+    } else if(method == "degree") {
         return(degree(graph))
-    }
-    else if(method == "betweenness") {
+    } else if(method == "betweenness") {
         return(betweenness(graph))
-    }
-    else if(method == "in.reach") {
+    } else if(method == "in.reach") {
         return(reach(graph, mode="in"))
-    }
-    else if(method == "out.reach") {
+    } else if(method == "out.reach") {
         return(reach(graph, mode="out"))
-    }
-    else if(method == "reach") {
+    } else if(method == "reach") {
         return(reach(graph))
-    }
-    else if(method == "in.spread") {
+    } else if(method == "in.spread") {
         return(spread(graph, mode="in"))
-    }
-    else if(method == "out.spread") {
+    } else if(method == "out.spread") {
         return(spread(graph, mode="out"))
-    }
-    else if(method == "spread") {
+    } else if(method == "spread") {
         return(spread(graph))
-    }
-    else {
-        stop("wrong method.\n")
+    } else {
+        stop("Wrong centrality method.\n")
     }
 }
 

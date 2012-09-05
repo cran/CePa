@@ -7,7 +7,7 @@ Apply centrality-extended GSA on a single pathway
 \usage{
 cepa.univariate(mat, label, pc, pathway = NULL, id = NULL, cen = "equal.weight",
     cen.name = if(is.function(cen)) deparse(substitute(cen)) else if(mode(cen) == "name") deparse(cen) else cen,
-    iter = 1000, glevel = "tvalue_abs", plevel = "mean",
+    iter = 1000, nlevel = "tvalue_abs", plevel = "mean",
     node.level.from.expr = NULL, node.level.t.value = NULL,
     r.node.level.from.expr = NULL)        
 }
@@ -19,8 +19,10 @@ cepa.univariate(mat, label, pc, pathway = NULL, id = NULL, cen = "equal.weight",
   \item{id}{identify the number of the pathway in the catalogue}
   \item{cen}{centrality measuments, it can ce a string, or function has been quote}
   \item{cen.name}{centrality measurement names}
-  \item{glevel}{gene level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs"}
-  \item{plevel}{pathway level transformation, should be one of "max", "min", "median", "sum", "mean", "rank"}
+  \item{nlevel}{node level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs".
+                Also self-defined functions are allowed, see \code{\link{cepa.univariate.all}} for detail.}
+  \item{plevel}{pathway level transformation, should be one of "max", "min", "median", "sum", "mean", "rank".
+                Also, self-defined functions are allowed, see \code{\link{cepa.univariate.all}} for detail.}
   \item{node.level.from.expr}{for simplicity of computing}
   \item{node.level.t.value}{for simplicity of computing}
   \item{r.node.level.from.expr}{for simplicity of computing}

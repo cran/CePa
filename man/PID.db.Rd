@@ -31,7 +31,7 @@ The node.name provides the custumed name for each node. The node.type provides t
 type for each node (e.g. it is a complex or compound). The version provides the version
 of the catalogue data.
 
-Data has been updated to the lastest version by the day the package released.
+Data has been updated to the lastest version by the day the package released (at 2012_07_19 09:34::20).
 
 Note only part of pathways in the XML file are listed on the PID website. Also, 
 we have set the minimum and maximum connected nodes when extracting pathways 

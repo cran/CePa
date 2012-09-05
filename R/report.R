@@ -3,12 +3,12 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
           only.sig = TRUE, dir.path = NULL, ...) {
     
     if(is.null(dir.path)) {
-	    dir.path = paste("cepa.report", gsub("[ :]", "-", as.character(Sys.time())), sep=".")
+        dir.path = paste("cepa.report", gsub("[ :]", "-", as.character(Sys.time())), sep=".")
     }
-	dir.create(dir.path, showWarnings=FALSE)
-	
-	file.copy(paste(system.file(package = "CePa"), "/extdata/js", sep=""), dir.path, recursive = TRUE)
-	file.copy(paste(system.file(package = "CePa"), "/extdata/swf", sep=""), dir.path, recursive = TRUE)
+    dir.create(dir.path, showWarnings=FALSE)
+    
+    file.copy(paste(system.file(package = "CePa"), "/extdata/js", sep=""), dir.path, recursive = TRUE)
+    file.copy(paste(system.file(package = "CePa"), "/extdata/swf", sep=""), dir.path, recursive = TRUE)
     
     f1.path = paste(dir.path, "/f1.png", sep="")
     png(f1.path, width=800, height=200)
@@ -46,8 +46,8 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
                     png(image.path, width=800, height=500)
                     plot(x, pathway.name[i], ce, type="null", ...)
                     dev.off()
-					
-					write.graph(gg, file = paste(dir.path, "/xml/", pathway.name[i], "-", ce, ".xml", sep=""), format = "graphml")
+                    
+                    write.graph(gg, file = paste(dir.path, "/xml/", pathway.name[i], "-", ce, ".xml", sep=""), format = "graphml")
                 }
             }
         }
@@ -63,8 +63,8 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
                 png(image.path, width=1000, height=500)
                 plot(x, pathway.name[i], ce, type="null", ...)
                 dev.off()
-				
-				write.graph(gg, file = paste(dir.path, "/xml/", pathway.name[i], "-", ce, ".xml", sep=""), format = "graphml")
+                
+                write.graph(gg, file = paste(dir.path, "/xml/", pathway.name[i], "-", ce, ".xml", sep=""), format = "graphml")
             }
         }
     }
@@ -80,7 +80,8 @@ report = function(x, adj.method = "none", cutoff = ifelse(adj.method == "none", 
                        sig.path = paste("significance-by-", adj.method, ".txt", sep=""),
                        adj.method = adj.method,
                        cutoff = cutoff,
-                       only.sig = only.sig)
+                       only.sig = only.sig,
+                       procedure = ifelse(is.ora(x), "Over-representation Analysis", "Gene-Set Analysis"))
     
     tt = readLines(template.file, n = -1)
     html = sapply(tt, function(x) template(x, replacement))

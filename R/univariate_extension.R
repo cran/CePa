@@ -1,14 +1,13 @@
 cepa.univariate.all = function(mat, label, pc, cen = default.centralities,
            cen.name = sapply(cen, function(x) ifelse(mode(x) == "name", deparse(x), x)), 
-           glevel = "tvalue_abs", plevel = "mean", iter = 1000) {
+           nlevel = "tvalue_abs", plevel = "mean", iter = 1000) {
     
-    glevelFun = find.glevelFun(glevel)  # if glevelFun is binary, the adj.method and cutoff have been hard coded in the functions
+    nlevelFun = find.nlevelFun(nlevel)  # if nlevelFun is binary, the adj.method and cutoff have been hard coded in the functions
     plevelFun = find.plevelFun(plevel)
     
     # if cen argument is a function, the function should be quoted or substituted
     # because we need the function name
     for(ce in cen) {
-        ce = unlist(ce)
         if(is.function(ce)) {
             stop("Functions cannot be used directly because we need the function name, use quote or substitute.\n")
         }
@@ -60,49 +59,52 @@ cepa.univariate.all = function(mat, label, pc, cen = default.centralities,
     
         # gene expression just in the pathway
         l = rownames(mat) %in% mapping[, 2]
-		cat("      ", sum(l), " genes measured in the pathway...\n", sep = "")
-		# if no genes are measure in the pathway
-		if(sum(l) == 0) {
-			node.level.from.expr = rep(0, length(node))
-			node.level.t.value = rep(0, length(node))
-			r.node.level.from.expr = matrix(0, nrow = length(node), ncol = iter)
-		} else {
-			mat.gene = mat[l, ,drop = FALSE]
-			mat.gene = t(apply(mat.gene, 1, scale))  # really need to be scaled?
-			
-			# generate node expression from its member genes
-			# if there is no member gene, the expression is zero
-			mat.node = matrix(0, nrow=length(node), ncol = dim(mat)[2])
-			rownames(mat.node) = node
-			for(k in 1:length(node)) {
-				l = mapping[, 1] == node[k]
-				gene.in.node = unique(mapping[l, 2])
-				gene.in.node.in.mat = gene.in.node[gene.in.node %in% rownames(mat.gene)]
-				if(length(gene.in.node.in.mat) == 1) {
-					mat.node[k, ] = mat.gene[gene.in.node.in.mat, ]
-				} else if(length(gene.in.node.in.mat > 1)) {  # use the biggeset component of member gene expression matrix
-					mm = t(mat.gene[gene.in.node.in.mat, ])
-					pcar = prcomp(mm)
-					mat.node[k, ] = predict(pcar, mm)[, 1]
-				}
-			}
-			
-			node.level.from.expr = apply(mat.node, 1, function(x) glevelFun(x[.treatment(label)], x[.control(label)]))
-			node.level.t.value = apply(mat.node, 1, function(x) geneLevelFun.tvalue(x[.treatment(label)], x[.control(label)]))
-			
-			r.node.level.from.expr = matrix(0, nrow = length(node), ncol = iter)
-			for(k in 1:iter) {
-				r.label = .permutate(label)
-				r.node.level.from.expr[, k] = apply(mat.node, 1, function(x) glevelFun(x[.treatment(r.label)], x[.control(r.label)]))
-			}
+        cat("      ", sum(l), " genes measured in the pathway...\n", sep = "")
+        # if no genes are measure in the pathway
+        if(sum(l) == 0) {
+            node.level.from.expr = rep(0, length(node))
+            node.level.t.value = rep(0, length(node))
+            r.node.level.from.expr = matrix(0, nrow = length(node), ncol = iter)
+        } else {
+            mat.gene = mat[l, ,drop = FALSE]
+            mat.gene = t(apply(mat.gene, 1, scale))  # really need to be scaled?
+            
+            # generate node expression from its member genes
+            # if there is no member gene, the expression is zero
+            mat.node = matrix(0, nrow=length(node), ncol = dim(mat)[2])
+            rownames(mat.node) = node
+            for(k in 1:length(node)) {
+                l = mapping[, 1] == node[k]
+                gene.in.node = unique(mapping[l, 2])
+                gene.in.node.in.mat = gene.in.node[gene.in.node %in% rownames(mat.gene)]
+                if(length(gene.in.node.in.mat) == 1) {
+                    mat.node[k, ] = mat.gene[gene.in.node.in.mat, ]
+                } else if(length(gene.in.node.in.mat > 1)) {  # use the biggeset component of member gene expression matrix
+                    mm = t(mat.gene[gene.in.node.in.mat, ])
+                    pcar = prcomp(mm)
+                    mat.node[k, ] = predict(pcar, mm)[, 1]
+                }
+            }
+            
+            node.level.from.expr = apply(mat.node, 1, function(x) nlevelFun(x[.treatment(label)], x[.control(label)]))
+            node.level.t.value = apply(mat.node, 1, function(x) nodeLevelFun.tvalue(x[.treatment(label)], x[.control(label)]))
+            
+            node.level.from.expr[is.na(node.level.from.expr)] = 0
+            node.level.t.value[is.na(node.level.t.value)] = 0
+    
+            r.node.level.from.expr = matrix(0, nrow = length(node), ncol = iter)
+            for(k in 1:iter) {
+                r.label = .permutate(label)
+                r.node.level.from.expr[, k] = apply(mat.node, 1, function(x) nlevelFun(x[.treatment(r.label)], x[.control(r.label)]))
+                r.node.level.from.expr[is.na(r.node.level.from.expr[, k]), k] = 0
+            }
         }
-		
+        
         j = 0
         for(ce in cen) {
-            ce = unlist(ce)   # cen argument may be mixed with strings and functions
             j = j + 1
             pathway.result[[i]][[j]] = cepa.univariate(mat = mat, label = label, pc = pc, pathway = pathway,
-                                                    cen = ce, iter = iter, glevel = glevel, plevel = plevel,
+                                                    cen = ce, iter = iter, nlevel = nlevel, plevel = plevel,
                                                     node.level.from.expr = node.level.from.expr, node.level.t.value = node.level.t.value,
                                                     r.node.level.from.expr = r.node.level.from.expr)
             
@@ -119,12 +121,12 @@ cepa.univariate.all = function(mat, label, pc, cen = default.centralities,
 # mat, label, ...
 cepa.univariate = function(mat, label, pc, pathway = NULL, id = NULL, cen = "equal.weight",
                    cen.name = if(is.function(cen)) deparse(substitute(cen)) else if(mode(cen) == "name") deparse(cen) else cen,
-                   iter = 1000, glevel = "tvalue_abs", plevel = "mean",
+                   iter = 1000, nlevel = "tvalue_abs", plevel = "mean",
                    node.level.from.expr = NULL, node.level.t.value = NULL,
                    r.node.level.from.expr = NULL) {
     
-    # in this version, we do not allow user-defined glevel, nlevel and plevel functions
-    glevelFun = find.glevelFun(glevel)  # if glevelFun is binary, the adj.method and cutoff have been hard coded in the functions
+    # in this version, we do not allow user-defined nlevel, nlevel and plevel functions
+    nlevelFun = find.nlevelFun(nlevel)  # if nlevelFun is binary, the adj.method and cutoff have been hard coded in the functions
     plevelFun = find.plevelFun(plevel)
     
     
@@ -189,34 +191,37 @@ cepa.univariate = function(mat, label, pc, pathway = NULL, id = NULL, cen = "equ
     if(is.null(node.level.from.expr)) {
         # gene expression just in the pathway
         l = rownames(mat) %in% mapping[, 2]
-		if(sum(l) == 0) {
-			node.level.from.expr = rep(0, length(node))
-			node.level.t.value = rep(0, length(node))
-		} else {
-			mat.gene = mat[l, ,drop=FALSE]
-			mat.gene = t(apply(mat.gene, 1, scale))  # really need to be scaled?
-			
-			# generate node expression from its member genes
-			# if there is no member gene, the expression is zero
-			mat.node = matrix(0, nrow=length(node), ncol = dim(mat)[2])
-			rownames(mat.node) = node
-			for(i in 1:length(node)) {
-				l = mapping[, 1] == node[i]
-				gene.in.node = unique(mapping[l, 2])
-				gene.in.node.in.mat = gene.in.node[gene.in.node %in% rownames(mat.gene)]
-				if(length(gene.in.node.in.mat) == 1) {
-					mat.node[i, ] = mat.gene[gene.in.node.in.mat, ]
-				} else if(length(gene.in.node.in.mat > 1)) {  # use the biggeset component of member gene expression matrix
-					mm = t(mat.gene[gene.in.node.in.mat, ])
-					pcar = prcomp(mm)
-					mat.node[i, ] = predict(pcar, mm)[, 1]
-				}
-			}
-			
-			node.level.from.expr = apply(mat.node, 1, function(x) glevelFun(x[.treatment(label)], x[.control(label)]))
-			node.level.t.value = apply(mat.node, 1, function(x) geneLevelFun.tvalue(x[.treatment(label)], x[.control(label)]))
-		}
+        if(sum(l) == 0) {
+            node.level.from.expr = rep(0, length(node))
+            node.level.t.value = rep(0, length(node))
+        } else {
+            mat.gene = mat[l, ,drop=FALSE]
+            mat.gene = t(apply(mat.gene, 1, scale))  # really need to be scaled?
+            
+            # generate node expression from its member genes
+            # if there is no member gene, the expression is zero
+            mat.node = matrix(0, nrow=length(node), ncol = dim(mat)[2])
+            rownames(mat.node) = node
+            for(i in 1:length(node)) {
+                l = mapping[, 1] == node[i]
+                gene.in.node = unique(mapping[l, 2])
+                gene.in.node.in.mat = gene.in.node[gene.in.node %in% rownames(mat.gene)]
+                if(length(gene.in.node.in.mat) == 1) {
+                    mat.node[i, ] = mat.gene[gene.in.node.in.mat, ]
+                } else if(length(gene.in.node.in.mat > 1)) {  # use the biggeset component of member gene expression matrix
+                    mm = t(mat.gene[gene.in.node.in.mat, ])
+                    pcar = prcomp(mm)
+                    mat.node[i, ] = predict(pcar, mm)[, 1]
+                }
+            }
+            
+            node.level.from.expr = apply(mat.node, 1, function(x) nlevelFun(x[.treatment(label)], x[.control(label)]))
+            node.level.t.value = apply(mat.node, 1, function(x) nodeLevelFun.tvalue(x[.treatment(label)], x[.control(label)]))
+        }
     }
+    
+    node.level.from.expr[is.na(node.level.from.expr)] = 0
+    node.level.t.value[is.na(node.level.t.value)] = 0
     
     node.level = weight * node.level.from.expr
     ds = quantile(node.level, c(1, 0.75, 0.5, 0))
@@ -228,25 +233,27 @@ cepa.univariate = function(mat, label, pc, pathway = NULL, id = NULL, cen = "equ
     s.random = numeric(iter)
     ds.random = matrix(0, iter, 4)   # descriptive statistic of the node
     colnames(ds.random) = c("max", "q75", "median", "min")
-	if(sum(rownames(mat) %in% mapping[, 2]) == 0) {
-		s.random = rep(0, iter)
-	} else {
-		for(i in 1:iter) {
-			
-			if(is.null(r.node.level.from.expr)) {
-				r.label = .permutate(label)
-				r.node.level.from.expr.current = apply(mat.node, 1, function(x) glevelFun(x[.treatment(r.label)], x[.control(r.label)]))
-			} else {
-				r.node.level.from.expr.current = r.node.level.from.expr[, i]
-			}
-			
-			r.node.level = weight * r.node.level.from.expr.current
-			s.random[i] = plevelFun(r.node.level)
-			
-			ds.random[i, ] = quantile(r.node.level, c(1, 0.75, 0.5, 0))
-		}
+    if(sum(rownames(mat) %in% mapping[, 2]) == 0) {
+        s.random = rep(0, iter)
+    } else {
+        for(i in 1:iter) {
+            
+            if(is.null(r.node.level.from.expr)) {
+                r.label = .permutate(label)
+                r.node.level.from.expr.current = apply(mat.node, 1, function(x) nlevelFun(x[.treatment(r.label)], x[.control(r.label)]))
+            } else {
+                r.node.level.from.expr.current = r.node.level.from.expr[, i]
+            }
+            
+            r.node.level.from.expr.current[is.na(r.node.level.from.expr.current)] = 0
+    
+            r.node.level = weight * r.node.level.from.expr.current
+            s.random[i] = plevelFun(r.node.level)
+
+            ds.random[i, ] = quantile(r.node.level, c(1, 0.75, 0.5, 0))
+        }
     }
-	
+    
     p.value = (sum(s.random >= s) + 1) / (iter + 1)
     
     res = list("score" = s,                                  # pathway score
@@ -278,18 +285,18 @@ node.score = function(gene.level = NULL, gene.in.node = NULL, nlevelFun = NULL) 
     return(node.level.from.expr)
 }
 
-geneLevelFun.tvalue = function(x1, x2, ...) {
+nodeLevelFun.tvalue = function(x1, x2, ...) {
     n1 = length(x1)
     n2 = length(x2)
     v1 = var(x1)
     v2 = var(x2)
     ifelse(v1 + v2 == 0, 0, (mean(x1) - mean(x2)) / sqrt(v1/n1 + v2/n2))
 }
-geneLevelFun.tvalue_sq = function(x1, x2, ...) {
-    geneLevelFun.tvalue(x1, x2)^2
+nodeLevelFun.tvalue_sq = function(x1, x2, ...) {
+    nodeLevelFun.tvalue(x1, x2)^2
 }
-geneLevelFun.tvalue_abs = function(x1, x2, ...) {
-    abs(geneLevelFun.tvalue(x1, x2))
+nodeLevelFun.tvalue_abs = function(x1, x2, ...) {
+    abs(nodeLevelFun.tvalue(x1, x2))
 }
 
 
@@ -313,25 +320,38 @@ pathwayLevelFun.rank = function(x) {
 }
 
 
-# arguments are different according to different glevel functions
-find.glevelFun = function(method) {
-    f = switch(method,
-               tvalue = geneLevelFun.tvalue,
-               tvalue_sq = geneLevelFun.tvalue_sq,
-               tvalue_abs = geneLevelFun.tvalue_abs,
-               stop("Wrong gene level method."))
+# arguments are different according to different nlevel functions
+find.nlevelFun = function(method) {
+    if(is.character(method)) {
+        f = switch(method,
+                   tvalue     = nodeLevelFun.tvalue,
+                   tvalue_sq  = nodeLevelFun.tvalue_sq,
+                   tvalue_abs = nodeLevelFun.tvalue_abs,
+                   stop("Default node-level functions in string format are only tvalue, tvalue_sq and tvalue_abs."))
+    } else if ( is.function(method) ) {
+        if(length(as.list(args(method))) != 3) {
+            stop("Self-defined node-level function only can have two arguments.")
+        }
+        f = method
+    }
     return(f)
 }
 
 find.plevelFun = function(method) {
-    f = switch(method,
-           max    = pathwayLevelFun.max,
-           min    = pathwayLevelFun.min,
-           median = pathwayLevelFun.median,
-           sum    = pathwayLevelFun.sum,
-           mean   = pathwayLevelFun.mean,
-           rank   = pathwayLevelFun.rank,
-           stop("Wrong pathway level method."))
-    
+    if(is.character(method)) {
+        f = switch(method,
+               max    = pathwayLevelFun.max,
+               min    = pathwayLevelFun.min,
+               median = pathwayLevelFun.median,
+               sum    = pathwayLevelFun.sum,
+               mean   = pathwayLevelFun.mean,
+               rank   = pathwayLevelFun.rank,
+               stop("Wrong pathway level method."))
+    } else if ( is.function(method) ) {
+        if(length(as.list(args(method))) != 2) {
+            stop("Self-defined pathway-level function only can have one argument.")
+        }
+        f = method
+    }
     return(f)
 }

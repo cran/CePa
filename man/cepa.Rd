@@ -7,20 +7,22 @@ Apply CePa algorithm on a single pathway
 \usage{
 cepa(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, pathway = NULL, id = NULL, cen = "equal.weight",
     cen.name = if(is.function(cen)) deparse(substitute(cen)) else if(mode(cen) == "name") deparse(cen) else cen,
-    glevel = "tvalue_abs", plevel = "mean", iter = 1000)        
+    nlevel = "tvalue_abs", plevel = "mean", iter = 1000)        
 }
 \arguments{
   \item{dif}{differential gene list}
-  \item{bk}{background gene list}
+  \item{bk}{background gene list. If background gene list are not specified, use whole human genes}
   \item{mat}{expression matrix in which rows are genes and columns are samples}
   \item{label}{a \link{sampleLabel} object identify the design of the microarray experiment}
   \item{pc}{a \link{pathway.catalogue} object storing information of pathways}
   \item{pathway}{an \link[igraph]{igraph} object or edge list}
   \item{id}{identify which pathway should be analysis in the pathway catalogue}
   \item{cen}{centrality measuments, it can ce a string, or function has been quote}
-  \item{cen.name}{centrality measurement names}
-  \item{glevel}{gene level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs"}
-  \item{plevel}{pathway level transformation, should be one of "max", "min", "median", "sum", "mean", "rank"}
+  \item{cen.name}{centrality measurement names. This argument should be set if the \code{cen} is a function. }
+  \item{nlevel}{node level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs".
+                Also self-defined functions are allowed, see \code{\link{cepa.univariate}} for detail.}
+  \item{plevel}{pathway level transformation, should be one of "max", "min", "median", "sum", "mean", "rank".
+                Also, self-defined functions are allowed, see \code{\link{cepa.univariate}} for detail.}
   \item{iter}{number of simulations}
 }
 \details{
@@ -31,7 +33,7 @@ If \code{dif}, \code{bk}, \code{pc}, \code{pathway}, \code{id}, \code{cen}, \cod
 are specified, the arguments are passed to \link{cepa.ora}. The centrality-extension 
 of over-representation analysis (ORA) will be applied on the list of differential genes.
 
-If \code{mat}, \code{label}, \code{pc}, \code{pathway}, \code{id}, \code{cen}, \code{cen.name}, \code{glevel},
+If \code{mat}, \code{label}, \code{pc}, \code{pathway}, \code{id}, \code{cen}, \code{cen.name}, \code{nlevel},
 \code{plevel} and \code{iter} are specified, the arguments are passed to \link{cepa.univariate}.
 The centrality-extension of gene-set analysis (GSA) will be applied on the whole gene expressions.
 

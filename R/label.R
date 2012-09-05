@@ -4,7 +4,7 @@ sampleLabel = function (label, treatment, control) {
         stop("Can not find treatment label or control label.")
     }
     res = list(label = label, treatment = treatment, control = control)
-	class(res) = "sampleLabel"
+    class(res) = "sampleLabel"
     return(res)
 }
 

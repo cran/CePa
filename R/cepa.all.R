@@ -4,19 +4,19 @@
 # arguments for cepa.ora.all:
 #   dif, bk, pc, cen, cen.name, iter
 # arguments for cepa.univariate.all:
-#   mat, label, pc, cen, cen.name, glevel, plevel, iter
+#   mat, label, pc, cen, cen.name, nlevel, plevel, iter
 cepa.all = function(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, cen = default.centralities,
     cen.name = sapply(cen, function(x) ifelse(mode(x) == "name", deparse(x), x)), 
-    glevel = "tvalue_abs", plevel = "mean", iter = 1000 ) {
+    nlevel = "tvalue_abs", plevel = "mean", iter = 1000 ) {
     
     # for those who are lazy to specify argument names
     # if the first argument is a vector, then it is ora method
     if(is.vector(dif)) {
         # do nothing
-		if(is.null(bk)) {
-			dir = system.file(package = "CePa")
-			bk = read.table(paste(dir, "/extdata/bk.genome", sep=""), quote = "", stringsAsFactors = FALSE)[[1]]
-		}
+        if(is.null(bk)) {
+            dir = system.file(package = "CePa")
+            bk = read.table(paste(dir, "/extdata/bk.genome", sep=""), quote = "", stringsAsFactors = FALSE)[[1]]
+        }
     } else if(is.matrix(dif)) {
         mat = dif
         dif = NULL
@@ -28,7 +28,7 @@ cepa.all = function(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, cen = d
     if(! is.null(dif)) {     # if dif is specified
         res = cepa.ora.all(dif = dif, bk = bk, pc = pc, cen = cen, cen.name = cen.name, iter = iter)
     } else {
-        res = cepa.univariate.all(mat = mat, label = label, pc = pc, cen = cen, cen.name = cen.name, glevel = glevel, plevel = plevel, iter = iter)
+        res = cepa.univariate.all(mat = mat, label = label, pc = pc, cen = cen, cen.name = cen.name, nlevel = nlevel, plevel = plevel, iter = iter)
     }
     
     return(res)
@@ -40,17 +40,17 @@ cepa.all = function(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, cen = d
 # arguments for cepa.ora:
 #   dif, bk, pc, pathway, id, cen, cen.name, iter
 # arguments for cepa.univariate:
-#   mat, label, pc, pathway, id, cen, cen.name, glevel, nlevel, plevel, iter, gene.level, r.gene.level
+#   mat, label, pc, pathway, id, cen, cen.name, nlevel, nlevel, plevel, iter, gene.level, r.gene.level
 cepa = function(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, pathway = NULL, id = NULL, cen = "equal.weight",
     cen.name = if(is.function(cen)) deparse(substitute(cen)) else if(mode(cen) == "name") deparse(cen) else cen,
-    glevel = "tvalue_abs", plevel = "mean", iter = 1000) {
+    nlevel = "tvalue_abs", plevel = "mean", iter = 1000) {
     
     # if the first argument is a vector, then it is ora method
     if(is.vector(dif)) {
-		if(is.null(bk)) {
-			dir = system.file(package = "CePa")
-			bk = read.table(paste(dir, "/extdata/bk.genome", sep=""), quote = "", stringsAsFactors = FALSE)[[1]]
-		}
+        if(is.null(bk)) {
+            dir = system.file(package = "CePa")
+            bk = read.table(paste(dir, "/extdata/bk.genome", sep=""), quote = "", stringsAsFactors = FALSE)[[1]]
+        }
     } else if(is.matrix(dif)) {
         mat = dif
         dif = NULL
@@ -65,7 +65,7 @@ cepa = function(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, pathway = N
     } else {
         cat("  Applying Gene-set analysis (univariate procedure).\n")
         res = cepa.univariate(mat = mat, label = label, pathway = pathway, pc = pc, id = id, cen = cen,
-                   cen.name = cen.name, iter = iter, glevel = glevel, plevel = plevel)
+                   cen.name = cen.name, iter = iter, nlevel = nlevel, plevel = plevel)
     }
     
     return(res)
@@ -122,7 +122,7 @@ set.pathway.catalogue = function(pathList, interactionList, mapping,
     pc = list(pathList = pathList, 
               interactionList = interactionList,
               mapping = mapping,
-			  ...)        # name of the catalogue, such as KEGG, PID ...
+              ...)        # name of the catalogue, such as KEGG, PID ...
     class(pc) = "pathway.catalogue"
     return(pc)
 }
@@ -188,10 +188,10 @@ plot.pathway.catalogue = function(x, ...) {
 }
 
 is.ora = function(x) {
-    return(class(x) == "cepa" && x$framework == "ora")
+    return(class(x) == "cepa.all" && x[[1]][[1]]$framework == "ora")
 }
 
 is.gsa = function(x) {
-    return(class(x) == "cepa" && x$framework == "gsa.univariate")
+    return(class(x) == "cepa.all" && x[[1]][[1]]$framework == "gsa.univariate")
 }
 

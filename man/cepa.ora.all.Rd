@@ -12,9 +12,9 @@ cepa.ora.all(dif, pc, bk = NULL, cen = default.centralities,
 \arguments{
   \item{dif}{differential gene list}
   \item{pc}{a \link{pathway.catalogue} class object}
-  \item{bk}{background gene list}
-  \item{cen}{centrality measuments, it can ce a string, or function has been quote}
-  \item{cen.name}{centrality measurement names}
+  \item{bk}{background gene list. If background gene list are not specified, use whole human genes}
+  \item{cen}{centrality measuments, it can ce a string, or a function}
+  \item{cen.name}{centrality measurement names. By default it is parsed from \code{cen} argument}
   \item{iter}{number of simulations}
 }
 \details{

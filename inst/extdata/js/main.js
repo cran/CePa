@@ -135,7 +135,7 @@ function getFlash(pathway, centrality) {
 	close.innerHTML = "<input type='button' value='view in png' onclick='switchGraph(this, \""+pathway+"\", \""+centrality+"\");' />&nbsp;&nbsp;<input type='button' value='close' class='form-button' onclick='document.body.removeChild(document.getElementById(\"pathway-flash-div\"));document.body.removeChild(document.getElementById(\"pathway-flash\"))' />";
 
 	var note = document.createElement("p");
-	note.innerHTML = "Cannot see the network? You need to set the <a href='http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html'>security settings</a> of Adobe Flash Player.";
+	note.innerHTML = "Cannot see the network? You need to set the <a href='http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html'>security settings</a> of Adobe Flash Player.<br />We suggest you visualize it in modern browsers such as Firefox or Chrome.";
 
 	obj.appendChild(f1);
 	obj.appendChild(f2);

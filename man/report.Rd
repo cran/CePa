@@ -27,7 +27,7 @@ you can drag the network, zoom in and zoom out the network). To load Flash Playe
 successful in you browser, you may need to set the Flash security settings on your
 machine. See \url{http://cytoscapeweb.cytoscape.org/tutorial} and change the settings
 via \url{http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html}.
-	
+    
 The report would locate at the current working directory. View the report
 by clicking \code{index.html} in the report directory.
 
