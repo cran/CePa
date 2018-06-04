@@ -1,7 +1,70 @@
-
-
-# plot p.samplings verse p.fisher, all centralities
-plot.cepa.all = function(x, id = NULL, cen = 1, type = c("graph", "null"),
+# == title
+# plot the cepa.all object
+#
+# == param
+# -x          a `cepa.all` object
+# -id         index or the name for the pathway
+# -cen        index or the name for the centrality
+# -type       If the aim is to plot single pathway, then this argument is to identify the kind of the plotting.
+# -tool       Use which tool to visualize the graph. Choices are 'igraph' and 'Rgraphviz'
+# -node.name  node.name for each node
+# -node.type  node.type for each node
+# -adj.method method of `stats::p.adjust`, available methods are "holm", "hochberg", 
+#             "hommel", "bonferroni", "BH", "BY", "fdr", "none"
+# -only.sig   whether to show all pathways. If just show significant pathways, 
+#             the names for each significant pathway will be draw.
+# -cutoff     cutoff for significance
+# -...        other arguments
+#
+# == details
+# This function has two applications. First, it can draw heatmaps of p-values
+# of all pathways under different centrality measurements. To do it, users should set
+# ``x``, ``adj.method``, ``only.sig``, ``cutoff`` arguments. 
+#  
+# Second, it can draw figures of single
+# pathway under specific centrality measurement. Under this circumstance, 
+# this function is just a wrapper of `plot.cepa`. To do it, 
+# users should set ``x``, ``id``, ``cen``, ``type``, ``tool``, ``node.name`` and ``node.type`` arguments. The
+# ``id`` and ``cen`` arguments are used to get single `cepa` object that sent to the 
+# plot function.
+# 
+# It must be noted that these two kinds of arguments should not be mixed.
+# 
+# There is also another popular method ``qvalue`` to adjust p-values. However, errors
+# may occur when adjusting some kind of p-value list by ``qvalue``.
+# So ``qvalue`` was not implemented into CePa. But still users can override the default
+# p.adjust to support qvalue by themselves, see the vignette.
+# 
+# == seealso
+# `cepa.all`
+#
+# == author
+# Zuguang Gu <z.gu@dkfz.de>
+#
+# == example
+# \dontrun{
+# data(PID.db)
+#
+# # ORA extension
+# data(gene.list)
+# # will spend about 20 min
+# res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
+# plot(res.ora)
+# plot(res.ora, id = 3)
+# plot(res.ora, id = 3, type = "null")
+#
+# # GSA extension
+# # P53_symbol.gct and P53_cls can be downloaded from
+# # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+# eset = read.gct("P53_symbol.gct")
+# label = read.cls("P53.cls", treatment="MUT", control="WT")
+# # will spend about 45 min
+# res.gsa = cepa.all(mat = eset, label = label, pc = PID.db$NCI)
+# plot(res.gsa)
+# plot(res.gsa, id = 3, cen = 2)
+# plot(res.gsa, id = 3, cen = 2, type = "null")
+# }
+plot.cepa.all = function(x, id = NULL, cen = 1, type = c("graph", "null"), tool = c("igraph", "Rgraphviz"),
                         node.name = NULL, node.type = NULL,
                         adj.method = "none", only.sig = FALSE,
                         cutoff = ifelse(adj.method == "none", 0.01, 0.05), ...) {
@@ -22,12 +85,30 @@ plot.cepa.all = function(x, id = NULL, cen = 1, type = c("graph", "null"),
             cen = deparse(cen)
         }
         
-        plot(get.cepa(x, id, cen), type = type, node.name = node.name, node.type = node.type, ...)
+        plot(get.cepa(x, id, cen), type = type, tool = tool, node.name = node.name, node.type = node.type, ...)
 
     } else {    
         p.heatmap(x, adj.method = adj.method, only.sig = only.sig, cutoff = cutoff)
     }
 }
+
+
+# #
+# # ###########################################################
+# # # 
+# # #     write a new p.adjust to supprot qvalue
+# # #
+# library(qvalue)
+# p.adjust = function(p, method = c("holm", "hochberg", "hommel", "bonferroni",
+#                     "BH", "BY", "fdr", "none", "qvalue"), ...) {
+#     if(method == "qvalue") {
+#         # qvalue has more arguments, pass them by ...
+#         qvalue(p, ...)$qvalue
+#     } else {
+#         stats::p.adjust(p, method)
+#     }
+# }
+# }
 
 
 p.heatmap = function(x, adj.method = "none", only.sig = TRUE,
@@ -182,7 +263,42 @@ get_color = function(x,
     return(color)
 }
 
-# summary for top.all object
+# == title
+# print the cepa.all object
+# 
+# == param
+# -x   a `cepa.all` object
+# -... other arguments
+#
+# == details
+# The function print the number of significant pathways under various
+# centrality measures at p-value <= 0.01.
+#
+# == seealso
+# `cepa.all`
+#
+# == author
+# Zuguang Gu <z.gu@dkfz.de>
+#
+# == example
+# \dontrun{
+# data(PID.db)
+#
+# # ORA extension
+# data(gene.list)
+# # will spend about 20 min
+# res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
+# res.ora
+#
+# # GSA extension
+# # P53_symbol.gct and P53_cls can be downloaded from
+# # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+# eset = read.gct("P53_symbol.gct")
+# label = read.cls("P53.cls", treatment="MUT", control="WT")
+# # will spend about 45 min
+# res.gsa = cepa.all(mat = eset, label = label, pc = PID.db$NCI)
+# res.gsa
+# }
 print.cepa.all = function(x, ...) {
     cat("\n")
     cat("number of pathways:", length(x), "\n")
@@ -203,6 +319,50 @@ print.cepa.all = function(x, ...) {
     cat("\n")
 }
 
+# == title
+# Plot the cepa object
+#
+# == param
+# -x    a `cepa` object
+# -type identify the type for the plot
+# -...   arguments passed to `plotGraph`
+#
+# == details
+# The function is wrapper of `plotGraph` and `plotNull`.
+# If type is specified to "graph", the graph of the network will be plotted (see `plotGraph` for details).
+# If type is specified to "null", the null distribution of the pathway score
+# in the pathway will be plotted (see `plotNull` for details).
+#
+# == return
+# if type is set to "graph", the function will return a `igraph::igraph` object or a ``graphML`` object of the pathway. Else it is NULL.
+#
+# == author
+# Zuguang Gu <z.gu@dkfz.de>
+#
+# == seealso
+# `cepa`, `plotNull`, `plotGraph`
+#
+# == example
+# \dontrun{
+#
+# data(PID.db)
+#
+# # ORA extension
+# data(gene.list)
+# # will spend about 20 min
+# res.ora = cepa(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI, id = 2)
+# plot(res.ora)
+# plot(res.ora, type = "null")
+#
+# # GSA extension
+# # P53_symbol.gct and P53_cls can be downloaded from
+# # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+# eset = read.gct("P53_symbol.gct")
+# label = read.cls("P53.cls", treatment="MUT", control="WT")
+# # will spend about 45 min
+# res.gsa = cepa(mat = eset, label = label, pc = PID.db$NCI, id = 2)
+# plot(res.gsa, type = "null")
+# }
 plot.cepa = function(x, type = c("graph", "null"), ...) {
     type = type[1]
     if(type == "graph") {
@@ -212,6 +372,51 @@ plot.cepa = function(x, type = c("graph", "null"), ...) {
     }
 }
 
+# == title
+# Plot the null distribution of the pathway score
+#
+# == param
+# -x a `cepa` object
+#
+# == details
+# There are two figures in the plotting.
+#
+# - A) Distribution of node score in the pathway under simulation. Since a pathway contains
+# a list of nodes. The distribution of node score for the pathway in each simulation is measures by maximum value, 
+# the 75th quantile, median value and minimum value. The distribution of node score for 
+# the pathway in the real data is highlighted.
+#
+# - B) Histogram of simulated pathway scores. 
+#
+# The function is always called through `plot.cepa.all` and `plot.cepa`.
+#
+# == author
+# Zuguang Gu <z.gu@dkfz.de>
+#
+# == seealso
+# `cepa`, `plot.cepa`
+#
+# == example
+# \dontrun{
+# data(PID.db)
+#
+# # ORA extension
+# data(gene.list)
+# # will spend about 20 min
+# res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
+# ora = get.cepa(res.ora, id = 5, cen = 3)
+# plotNull(ora)
+#
+# # GSA extension
+# # P53_symbol.gct and P53_cls can be downloaded from
+# # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+# eset = read.gct("P53_symbol.gct")
+# label = read.cls("P53.cls", treatment="MUT", control="WT")
+# # will spend about 45 min
+# res.gsa = cepa.all(mat = eset, label = label, pc = PID.db$NCI)
+# gsa = get.cepa(res.gsa, id = 5, cen = 3)
+# plotNull(gsa)
+# }
 plotNull = function(x) {
     s = x$score
     s.random = x$score.random
@@ -263,9 +468,74 @@ plotNull = function(x) {
     par(opar)
 }
 
-# node.attributes
-plotGraph = function(x, node.name = NULL, node.type = NULL,
-                     graph.node.max.size = 20, graph.node.min.size = 3, graph.layout.method = NULL, ...) {
+# == title
+# Plot graph for the pathway network
+#
+# == param
+# -x                   a `cepa` object
+# -node.name           node.name for each node
+# -node.type           node.type for each node
+# -draw                Whether to draw the graph
+# -tool                Use which tool to visualize the graph. Choices are 'igraph' and 'Rgraphviz'
+# -graph.node.max.size max size of the node in the graph
+# -graph.node.min.size min size of the node in the graph
+# -graph.layout.method function of the layout method. For the list
+#                      of available methods, see `igraph::layout`
+# -...                 other arguments
+#
+# == details
+# Graph view of the pathway where the size of node is proportional to centrality 
+# value of the node. 
+#
+# By default, the layout for the pathway tree-like. If the number of pathway nodes
+# is large, the layout would be a random layout.
+#
+# Two packages can be selected to visualize the graph: ``igraph`` and ``Rgraphviz``.
+# Default package is ``igraph`` (in fact, this package just uses the data generated from
+# the layout function in `igraph::igraph` package, which are the coordinate of nodes and edges.
+# And the I re-wrote the plotting function to generate the graph). From my personal view,
+# ``Rgraphviz`` package generated more beautiful graphs.
+# 
+# If the ``tool`` is set as ``igraph``, the function returns a `igraph::igraph` object. And
+# if the ``tool`` is set as ``Rgraphviz``, the function returns a ``graphAM`` class object.
+# So if users don't satisfy, they can draw graphs of the network with their
+# own settings.
+#
+# The function is always called through `plot.cepa.all` and `plot.cepa`.
+#
+# == return
+# A `igraph::igraph` object of the pathway
+#
+# == author
+# Zuguang Gu <z.gu@dkfz.de>
+#
+# == example
+# \dontrun{
+# data(PID.db)
+# # ORA extension
+# data(gene.list)
+# # will spend about 20 min
+# res.ora = cepa.all(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI)
+# ora = get.cepa(res.ora, id = 5, cen = 3)
+# plotGraph(ora)
+# # GSA extension
+# # P53_symbol.gct and P53_cls can be downloaded from
+# # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+# eset = read.gct("P53_symbol.gct")
+# label = read.cls("P53.cls", treatment="MUT", control="WT")
+# # will spend about 45 min
+# res.gsa = cepa.all(mat = eset, label = label, pc = PID.db$NCI)
+# gsa = get.cepa(res.gsa, id = 5, cen = 3)
+# plotGraph(gsa)
+# }
+plotGraph = function(x, node.name = NULL, node.type = NULL, draw = TRUE, 
+    tool = c("igraph", "Rgraphviz"), graph.node.max.size = 20, 
+    graph.node.min.size = 3, graph.layout.method = NULL) {
+    
+    tool = tool[1]
+    if(! tool %in% c("igraph", "Rgraphviz")) {
+        stop("Must choose visuallization method in 'igraph' and 'Rgraphviz'.")
+    }
     
     s = x$score
     s.random = x$score.random
@@ -281,18 +551,14 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
     # check node.name and node.type
     if(! is.null(node.name)) {
         node.name = node.name[node.id]
-        if(sum(is.na(node.name))) {
-            stop("cannot match all nodes with node name.\n")
-        }
+        node.name[is.na(node.name)] = ""
+    } else {
+        node.name = x$node.name   
     }
+    
     if(! is.null(node.type)) {
         node.type = node.type[node.id]
-        if(sum(is.na(node.type))) {
-            stop("cannot match all nodes with node type.\n")
-        }
-        if(length(setdiff(node.type, c("protein", "complex", "family", "compound", "rna")))) {
-            stop("node.type only permits protein, complex, family, subunit, compound, rna.\n")
-        }
+        node.type[is.na(node.type)] = "asist.node"
     }
     
     if(length(weight) == 0) {
@@ -301,49 +567,30 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
         return(NULL)
     }
     
-    opar = par(no.readonly = TRUE)
-
+    
     # node should only be in protein, complex, family, compound, rna, subunit
     if(is.null(node.type)) {
         if(x$framework == "gsa.univariate") {
-            v.color = get_color(node.level, colors = c("#91CF60", "#EEEEEE", "#E41A1C"), fc = c(-3, 0, 3), gradient = function(x) x^2)
+            v.color = get_color(node.level, colors = c("#91CF60", "#EEEEEE", "#FC8D59"), fc = c(-3, 0, 3), gradient = function(x) x^2)
         } else {
-            v.color = get_color(node.level, colors = c("#91CF60", "#C8E7AF", "#F18C8D"), fc = c(-1, 0, 1), gradient = function(x) x^2)
+            v.color = get_color(node.level, colors = c("#4DAF4A", "#4DAF4A", "#E41A1C"), fc = c(-1, 0, 1), gradient = function(x) x^2)
         }
-        complex.id = grepl("^\\d+$", x$node.name)
-        v.color[complex.id] = rgb(50, 136, 189, maxColorValue = 255)
-        
-        # shape
-        v.shape = rep("circle", length(weight))
-        #v.shape[complex.id] = "square"
+        v.color[node.name == ""] = "#377EB8" # non-protein nodes
         
         v.frame.color = "white"
     } else {    
         if(x$framework == "gsa.univariate") {
-            v.color = get_color(node.level, colors = c("#91CF60", "#EEEEEE", "#E41A1C"), fc = c(-3, 0, 3), gradient = function(x) x^2)
+            v.color = get_color(node.level, colors = c("#91CF60", "#EEEEEE", "#FC8D59"), fc = c(-3, 0, 3), gradient = function(x) x^2)
         } else {
-            v.color = get_color(node.level, colors = c("#91CF60", "#C8E7AF", "#F18C8D"), fc = c(-1, 0, 1), gradient = function(x) x^2)
+            v.color = get_color(node.level, colors = c("#4DAF4A", "#4DAF4A", "#E41A1C"), fc = c(-1, 0, 1), gradient = function(x) x^2)
         }
-        #v.color[node.type == "protein"] = rgb(145, 207, 96, maxColorValue = 255)
-        #v.color[node.type == "complex"] = rgb(145, 207, 96, maxColorValue = 255)
-        #v.color[node.type == "family"] = rgb(145, 207, 96, maxColorValue = 255)
-        #v.color[node.type == "subunit"] = rgb(145, 207, 96, maxColorValue = 255)
-        v.color[node.type == "compound"] = rgb(50, 136, 189, maxColorValue = 255)
-        v.color[node.type == "rna"] = rgb(84, 39, 136, maxColorValue = 255)
         
-        v.shape = rep("circle", length(node.id))
-        v.shape[node.type == "protein"] = "circle"
-        v.shape[node.type == "complex"] = "circle"
-        v.shape[node.type == "family"] = "circle"
-        v.shape[node.type == "subunit"] = "circle"
-        v.shape[node.type == "compound"] = "square"
-        v.shape[node.type == "rna"] = "square"
-        
-        v.frame.color = rep("white", length(node.id))
-        v.frame.color[node.type == "protein"] = "white"
-        v.frame.color[node.type == "complex"] = rgb(228, 26, 28, maxColorValue = 255)
-        v.frame.color[node.type == "family"] = rgb(55, 126, 184, maxColorValue = 255)
-        v.frame.color[node.type == "subunit"] = rgb(152, 78, 163, maxColorValue = 255)
+        all.node.types = unique(node.type)
+        other.node.types = all.node.types[!grepl("^(protein|complex|asist.node)$", all.node.types, ignore.case=TRUE)]
+        other.colors = c("#377EB8", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999")
+        for(i in seq_along(other.node.types)) {
+            v.color[node.type == other.node.types[i]] = other.colors[i]   
+        }
     }
     
     # size
@@ -362,15 +609,27 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
         v.label = gsub("/", "\n", v.label)
     }
     
+    if(! is.null(node.type)) {
+        v.size[node.type == "asist.node"] = min.size
+        v.color[node.type == "asist.node"] = "#CCCCCC"
+    }
+
+    V(pathway)$shape = "circle"
     V(pathway)$color = v.color
-    V(pathway)$shape = v.shape
     V(pathway)$size = v.size
     V(pathway)$label = v.label
-    V(pathway)$frame.color = v.frame.color
     V(pathway)$label.cex = 0.8
     V(pathway)$label.color = "black"
     E(pathway)$arrow.size = 0.5
     #E(pathway)$color = "#CCCCCC"
+    
+    if(! draw) {
+        if(tool == "igraph") {
+            return(pathway)
+        } else if(tool == "Rgraphviz") {
+            return(plotByRGraphviz(pathway, draw = FALSE))
+        }
+    }
     
     if(is.null(graph.layout.method)) {
         layout.method = function(x) layout.reingold.tilford(x, mode = "all")
@@ -378,72 +637,85 @@ plotGraph = function(x, node.name = NULL, node.type = NULL,
         layout.method = graph.layout.method
     }
     
-    plot.igraph2(pathway, layout.method=layout.method)
+    opar = par(c("mar", "xpd"))
     
+    layout(cbind(1:2, 3:4), heights = c(9,cm(1)), widths = c(9, cm(0)))
+    if(tool == "igraph") {
+        plot.igraph2(pathway, layout.method=layout.method)
+    } else if(tool == "Rgraphviz") {
+        ra = plotByRGraphviz(pathway)
+    }
+    
+    par(mar = c(1, 4, 0, 4), xpd=FALSE)
+    plot(0,0, xlim = c(0, 1), type = "n", ylim = c(0, 1), ann = FALSE, axes = FALSE, xaxs = "i", yaxs = "i")
     if(is.null(node.type)) {
-        if(is.ora(x)) {
-            legend(0, 0, c("diff nodes", "non-diff nodes", "non-protein nodes"),
-                   col=c("#F18C8D", "#C8E7AF", "#3288BD"), pch=c(16,16,15), pt.cex=2, yjust=0, cex=0.8)
+        if(x$framework == "ora") {
+            legend(0, 0, c("diff nodes", "non-diff nodes", "non-protein nodes", "asist nodes"),
+                   col=c("#E41A1C", "#4DAF4A", "#377EB8", "#CCCCCC"), pch=16, pt.cex=2, yjust=0, cex=0.8)
         } else {
             e = seq(-4, 4, by=0.5)
-            color = get_color(e, colors = c("#91CF60", "#EEEEEE", "#E41A1C"), fc = c(-3, 0, 3), gradient = function(x) x^2)
-            startx = 0.9
-            endx = 1.1
-            for(i in 1:length(e)) {
-                x_left = startx + (i-1)*(endx - startx)/length(e)
-                x_right = startx + (i)*(endx - startx)/length(e)
-                rect(x_left, 0, x_right, 0.05, col = color[i], border = NA)
-            }
-            text(startx, 0, min(e), cex=0.8, adj=c(0.5, 1))
-            text((startx+endx)/2, 0, "0", cex=0.8, adj=c(0.5, 1))
-            text(endx, 0, max(e), cex=0.8, adj=c(0.5, 1))
-            text((startx+endx)/2, 0.05, "nodes t-value", cex=0.8, adj=c(0.5, -1))
-            rect(startx-0.04, -0.05, endx+0.04, 0.15, border=TRUE)
-            
-            legend(0, 0, c("non-protein nodes"),
-                   col=c(rgb(50, 136, 189, maxColorValue = 255)), pch=c(16,16,15), pt.cex=2, yjust=0, cex=0.8)
-        }
-    } else {
-        if(is.ora(x)) {
-            legend(0, 0, c("diff nodes", "non-diff nodes", "complex", "family", "subunit", "compound", "rna"),
-                   col=c("#F18C8D", "#C8E7AF",
-                         rgb(228, 26, 28, maxColorValue = 255),
-                         rgb(55, 126, 184, maxColorValue = 255),
-                         rgb(152, 78, 163, maxColorValue = 255),
-                         rgb(50, 136, 189, maxColorValue = 255),
-                         rgb(84, 39, 136, maxColorValue = 255)),
-                    pch=c(16,16,21,21,21,15,15), pt.cex=2, cex=0.8, yjust=0)
-        } else {
-            e = seq(-4, 4, by=0.5)
-            color = get_color(e, colors = c("#91CF60", "#EEEEEE", "#E41A1C"), fc = c(-3, 0, 3), gradient = function(x) x^2)
+            color = get_color(e, colors = c("#91CF60", "#EEEEEE", "#FC8D59"), fc = c(-3, 0, 3), gradient = function(x) x^2)
             startx = 0.8
             endx = 1
             for(i in 1:length(e)) {
                 x_left = startx + (i-1)*(endx - startx)/length(e)
                 x_right = startx + (i)*(endx - startx)/length(e)
-                rect(x_left, 0, x_right, 0.05, col = color[i], border = NA)
+                rect(x_left, 0.1, x_right, 0.4, col = color[i], border = NA)
             }
-            text(startx, 0, min(e), cex=0.8, adj=c(0.5, 1))
-            text((startx+endx)/2, 0, "0", cex=0.8, adj=c(0.5, 1))
-            text(endx, 0, max(e), cex=0.8, adj=c(0.5, 1))
-            text((startx+endx)/2, 0.05, "nodes t-value", cex=0.8, adj=c(0.5, -1))
-            rect(startx-0.04, -0.05, endx+0.04, 0.15, border=TRUE)
+            text(startx, 0.1, min(e), cex=0.8, adj=c(0.5, 1))
+            text((startx+endx)/2, 0.1, "0", cex=0.8, adj=c(0.5, 1))
+            text(endx, 0.1, max(e), cex=0.8, adj=c(0.5, 1))
+            text((startx+endx)/2, 0.4, "nodes t-value", cex=0.8, adj=c(0.5, -1))
+            #rect(startx-0.04, -0.05, endx+0.04, 0.15, border=TRUE)
+            
+            legend(0, 0, c("non-protein nodes", "asist nodes"),
+                   col=c("#377EB8", "#CCCCCC"), pch=16, pt.cex=2, yjust=0, cex=0.8)
+        }
+    } else {
+        if(x$framework == "ora") {
+            all.node.types = unique(node.type)
+            other.node.types = all.node.types[!grepl("^(protein|complex|asist.node)$", all.node.types, ignore.case=TRUE)]
+            other.colors = c("#377EB8", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999")
+            
+            legend(0, 0, c("diff nodes", "non-diff nodes", other.node.types, "asist nodes"),
+                   col=c("#E41A1C", "#4DAF4A", other.colors[seq_along(other.node.types)], "#CCCCCC"),
+                    pch=16, pt.cex=2, cex=0.8, yjust=0)
+        } else {
+            e = seq(-4, 4, by=0.5)
+            color = get_color(e, colors = c("#91CF60", "#EEEEEE", "#FC8D59"), fc = c(-3, 0, 3), gradient = function(x) x^2)
+            startx = 0.8
+            endx = 1
+            for(i in 1:length(e)) {
+                x_left = startx + (i-1)*(endx - startx)/length(e)
+                x_right = startx + (i)*(endx - startx)/length(e)
+                rect(x_left, 0.1, x_right, 0.4, col = color[i], border = NA)
+            }
+            text(startx, 0.1, min(e), cex=0.8, adj=c(0.5, 1))
+            text((startx+endx)/2, 0.1, "0", cex=0.8, adj=c(0.5, 1))
+            text(endx, 0.1, max(e), cex=0.8, adj=c(0.5, 1))
+            text((startx+endx)/2, 0.4, "nodes t-value", cex=0.8, adj=c(0.5, -1))
+            #rect(startx-0.04, -0.05, endx+0.04, 0.15, border=TRUE)
                 
-            legend(0, 0, c("complex", "family", "subunit", "compound", "rna"),
-                   col=c(rgb(228, 26, 28, maxColorValue = 255),
-                         rgb(55, 126, 184, maxColorValue = 255),
-                         rgb(152, 78, 163, maxColorValue = 255),
-                         rgb(50, 136, 189, maxColorValue = 255),
-                         rgb(84, 39, 136, maxColorValue = 255)),
-                    pch=c(21,21,21,15,15), pt.cex=c(2,2,2,2,2), cex=0.8, yjust=0)
+            all.node.types = unique(node.type)
+            other.node.types = all.node.types[!grepl("^(protein|complex|asist.node)$", all.node.types, ignore.case=TRUE)]
+            other.colors = c("#377EB8", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999")
+            
+            legend(0, 0, c(other.node.types, "asist nodes"),
+                col=c(other.colors[seq_along(other.node.types)], "#CCCCCC"),
+                pch=16, pt.cex=2, cex=0.8, yjust=0)
         }
     }
-    title("Graph view of the pathway")
+    layout(cbind(1))
     par(opar)
-    return(invisible(pathway))
+    
+    if(tool == "igraph") {
+        return(invisible(pathway))
+    } else if(tool == "Rgraphviz") {
+        return(invisible(ra))
+    }
 }
 
-plot.igraph2 = function(g, layout.method = layout.random, ...) {
+plot.igraph2 = function(g, layout.method = layout.random) {
     
     v.color = V(g)$color
     v.shape = V(g)$shape
@@ -474,19 +746,18 @@ plot.igraph2 = function(g, layout.method = layout.random, ...) {
         ly[, 2] = (ly[, 2] - min(ly[, 2]))/r2
     }
     rownames(ly) = pathway.nodes(g)
+    par(mar = c(0, 4.1, 2, 2.1))
     # points
     plot(ly, cex = v.size,
              col = v.color,
              pch = v.shape,
              ann = FALSE,
              axes = FALSE,
-             asp = 1,
              xlim = c(-0.1, 1.1),
              ylim = c(-0.1, 1.1),
              xaxs = "i",
              yaxs = "i"
              )
-    box()
     frame.pch = v.shape
     frame.pch[frame.pch == 16] = 21
     frame.pch[frame.pch == 15] = 0
@@ -555,6 +826,42 @@ reedge = function(x1, y1, x2, y2, r1, r2) {
     return(c(a1, a2))
 }
 
+# == title
+#   print the cepa object
+#
+# == param
+# -x   a `cepa` object
+# -... other arguments
+#
+# == details
+# The function print procedure of the analysis, the centrality and the p-value for the pathway.
+#
+# == author
+# Zuguang Gu <z.gu@dkfz.de>
+# 
+# == seealso
+# `cepa`
+#
+# == example
+# \dontrun{
+#
+# data(PID.db)
+#
+# # ORA extension
+# data(gene.list)
+# # will spend about 20 min
+# res.ora = cepa(dif = gene.list$dif, bk = gene.list$bk, pc = PID.db$NCI, id = 2)
+# res.ora
+#
+# # GSA extension
+# # P53_symbol.gct and P53_cls can be downloaded from
+# # http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
+# eset = read.gct("P53_symbol.gct")
+# label = read.cls("P53.cls", treatment="MUT", control="WT")
+# # will spend about 45 min
+# res.gsa = cepa(mat = eset, label = label, pc = PID.db$NCI, id = 2)
+# res.gsa
+# }
 print.cepa = function(x, ...) {
     cat("\n")
     cat("  procedure:", x$framework, "\n")
@@ -568,4 +875,40 @@ print.cepa = function(x, ...) {
 # similar to function jitter
 jitt = function(x, r = range(x[x != Inf], na.rm=TRUE)) {
     return(x + runif(length(x), -0.5, 0.5)*(r[2] - r[1])/50)
+}
+
+plotByRGraphviz = function(g, draw = TRUE) {
+    m = get.adjacency(g)
+    m = as.matrix(m)
+    g2 = new("graphAM", m, edgemode = "directed")
+    node = V(g)$name
+    node.size = V(g)$size
+
+    if(max(node.size) == min(node.size)) {
+        node.size = rep(0.5, length(node.size)) 
+    } else {
+        node.size = (node.size - min(node.size))/(max(node.size) - min(node.size))+0.2
+    }
+    names(node.size) = node
+    node.color = V(g)$color
+    names(node.color) = node
+    node.label.size = rep(0.7, length(node))
+    names(node.label.size) = node
+    node.label = V(g)$label
+    names(node.label) = node
+    node.shape = rep("circle", length(node))
+    node.shape[node.color == "#CCCCCC"] = "circle"
+    
+    names(node.shape) = node
+    
+    fix = rep(FALSE, length(node))
+    names(fix) = fix
+    
+    nAttr = list(width = node.size, height = node.size, label = node.label, shape = node.shape)
+    x = layoutGraph(g2, nodeAttrs = nAttr)
+    nodeRenderInfo(x) = list(fill = node.color, cex = node.label.size)
+    if(draw) {
+        renderGraph(x)
+    }
+    return(invisible(x))
 }
