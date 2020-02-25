@@ -20,7 +20,7 @@ cepa.univariate(mat, label, pc, pathway = NULL, id = NULL, cen = "equal.weight",
   \item{mat}{expression matrix in which rows are genes and columns are samples}
   \item{label}{a \code{\link{sampleLabel}} object identify the design of the microarray experiment}
   \item{pc}{a \code{pathway.catalogue} object storing information of pathways}
-  \item{pathway}{\code{\link[igraph]{igraph}} object or edge list}
+  \item{pathway}{\code{\link[igraph:aaa-igraph-package]{igraph}} object or edge list}
   \item{id}{identify the number of the pathway in the catalogue}
   \item{cen}{centrality measuments, it can ce a string, or function has been quote}
   \item{cen.name}{centrality measurement names}
