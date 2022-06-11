@@ -13,9 +13,6 @@
 # -``bk`` background gene list, gene symbol
 # -``dif`` differentially expressed gene list, gene symbol
 #
-# == source
-# http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE22058
-#
 # == examples
 # data(gene.list)
 # names(gene.list)
@@ -66,15 +63,6 @@
 #
 # Each pathway catalogue is a ``pathway.catalogue`` class object. Each pathway
 # catalogue can be used directly in `cepa.all` and `cepa`
-#
-# == source
-# ftp://ftp1.nci.nih.gov/pub/PID/XML/NCI-Nature_Curated.xml.gz
-#
-# ftp://ftp1.nci.nih.gov/pub/PID/XML/BioCarta.xml.gz
-#
-# ftp://ftp1.nci.nih.gov/pub/PID/XML/Reactome.xml.gz
-#
-# ftp://ftp1.nci.nih.gov/pub/PID/XML/KEGG.xml.gz
 #
 # == examples
 # data(PID.db)

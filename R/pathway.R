@@ -21,7 +21,7 @@
 # pathway = barabasi.game(200)
 # pathway.nodes(pathway)
 pathway.nodes = function(pathway) {
-    if(class(pathway) != "igraph") {
+    if(!inherits(pathway, "igraph")) {
         stop("Wrong class for pathway.\n")
     }
     

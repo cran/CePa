@@ -53,7 +53,7 @@ centrality = function(graph, method = "equal.weight") {
 # == details
 # The spread centrality measures how wide the node can send or receive the information in the network.
 # Like the water wave, the effect would be weakened with the increase of the distance to other nodes.
-
+#
 # If the weaken function is defined as ``1/x``, then the spread centrality is calculated as
 # ``sum(1/d(w, v))`` where ``d(w, v)`` is the length of the shortest path of node ``w`` and node ``v``.
 # 

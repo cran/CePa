@@ -24,8 +24,6 @@ A list containing two componets:
   \item{\code{dif}}{differentially expressed gene list, gene symbol}
 }
 }
-\section{Source}{
-\url{http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE22058}}
 \examples{
 data(gene.list)
 names(gene.list)

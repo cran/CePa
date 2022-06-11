@@ -83,7 +83,7 @@ cepa.univariate.all = function(mat, label, pc, cen = default.centralities,
         }
     }
     
-    if(class(pc) != "pathway.catalogue") {
+    if(!inherits(pc, "pathway.catalogue")) {
         stop("pc argument should be a pathway.catalogue object.")
     }
     
@@ -149,7 +149,7 @@ cepa.univariate.all = function(mat, label, pc, cen = default.centralities,
                 gene.in.node.in.mat = gene.in.node[gene.in.node %in% rownames(mat.gene)]
                 if(length(gene.in.node.in.mat) == 1) {
                     mat.node[k, ] = mat.gene[gene.in.node.in.mat, ]
-                } else if(length(gene.in.node.in.mat > 1)) {  # use the biggeset component of member gene expression matrix
+                } else if(length(gene.in.node.in.mat) > 1) {  # use the biggeset component of member gene expression matrix
                     mm = t(mat.gene[gene.in.node.in.mat, ])
                     pcar = prcomp(mm)
                     mat.node[k, ] = predict(pcar, mm)[, 1]
@@ -250,7 +250,7 @@ cepa.univariate = function(mat, label, pc, pathway = NULL, id = NULL, cen = "equ
                 stop("if pathway is a matrix or data frame, it should be 2 dimension and the number of columns is 2.\n")
             }
             pathway = generate.pathway(pathway)    # generate an igraph object
-        } else if(class(pathway) != "igraph") {    # it should be an igraph object
+        } else if(!inherits(pathway, "igraph")) {    # it should be an igraph object
             stop("Since pathway is not formatted as edge list, it should be an igraph object.")
         }
     } else if(! is.null(id)) {  # if the pathway is not specified, but the pathway ID is available
@@ -321,7 +321,7 @@ cepa.univariate = function(mat, label, pc, pathway = NULL, id = NULL, cen = "equ
                 gene.in.node.in.mat = gene.in.node[gene.in.node %in% rownames(mat.gene)]
                 if(length(gene.in.node.in.mat) == 1) {
                     mat.node[i, ] = mat.gene[gene.in.node.in.mat, ]
-                } else if(length(gene.in.node.in.mat > 1)) {  # use the biggeset component of member gene expression matrix
+                } else if(length(gene.in.node.in.mat) > 1) {  # use the biggeset component of member gene expression matrix
                     mm = t(mat.gene[gene.in.node.in.mat, ])
                     pcar = prcomp(mm)
                     mat.node[i, ] = predict(pcar, mm)[, 1]

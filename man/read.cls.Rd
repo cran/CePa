@@ -30,8 +30,6 @@ and class labels are taken from the factor of the vector parsed from the third l
 \value{
 A \code{sampleLabel} class object
 }
-\section{Source}{
-\url{http://www.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats}}
 \author{
 Zuguang Gu <z.gu@dkfz.de>
 }

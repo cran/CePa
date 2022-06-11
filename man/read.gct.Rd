@@ -29,8 +29,6 @@ GCT file is used together with CLS file.
 A matrix of the expression values, with rows correponding to genes and cols to
 samples.
 }
-\section{Source}{
-\url{http://www.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats}}
 \author{
 Zuguang Gu <z.gu@dkfz.de>
 }

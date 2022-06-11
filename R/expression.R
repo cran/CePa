@@ -21,9 +21,6 @@
 # == value
 # A ``sampleLabel`` class object
 #
-# == source
-# http://www.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats
-#
 # == author
 # Zuguang Gu <z.gu@dkfz.de>
 #
@@ -64,9 +61,6 @@ read.cls = function (file, treatment, control) {
 # == value
 # A matrix of the expression values, with rows correponding to genes and cols to
 # samples.
-#
-# == source
-# http://www.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats
 #
 # == author
 # Zuguang Gu <z.gu@dkfz.de>

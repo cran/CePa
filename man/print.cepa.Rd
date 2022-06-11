@@ -1,12 +1,10 @@
 \name{print.cepa}
 \alias{print.cepa}
 \title{
-\preformatted{
-  print the cepa object  }
+print the cepa object
 }
 \description{
-\preformatted{
-  print the cepa object  }
+print the cepa object
 }
 \usage{
 \method{print}{cepa}(x, ...)
@@ -39,7 +37,6 @@ res.ora
 
 # GSA extension
 # P53_symbol.gct and P53_cls can be downloaded from
-# http://mcube.nju.edu.cn/jwang/lab/soft/cepa/
 eset = read.gct("P53_symbol.gct")
 label = read.cls("P53.cls", treatment="MUT", control="WT")
 # will spend about 45 min

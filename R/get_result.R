@@ -43,7 +43,7 @@
 # }
 p.table = function(x, adj.method = NA, cutoff = ifelse(adj.method == "none", 0.01, 0.05)) {
 
-    if(class(x) != "cepa.all") {
+    if(!inherits(x, "cepa.all")) {
         stop("x should be cepa.all object.\n")
     }
     
@@ -106,7 +106,7 @@ p.table = function(x, adj.method = NA, cutoff = ifelse(adj.method == "none", 0.0
 # }
 get.cepa = function(x, id = NULL, cen = 1) {
     
-    if(class(x) != "cepa.all") {
+    if(!inherits(x, "cepa.all")) {
         stop("x should be cepa.all object.\n")
     }
     

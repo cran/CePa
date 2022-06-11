@@ -69,7 +69,7 @@ plot.cepa.all = function(x, id = NULL, cen = 1, type = c("graph", "null"), tool 
                         adj.method = "none", only.sig = FALSE,
                         cutoff = ifelse(adj.method == "none", 0.01, 0.05), ...) {
     
-    if(class(x) != "cepa.all") {
+    if(!inherits(x, "cepa.all")) {
         stop("x should be top.all object.\n")
     }
     
@@ -114,7 +114,7 @@ plot.cepa.all = function(x, id = NULL, cen = 1, type = c("graph", "null"), tool 
 p.heatmap = function(x, adj.method = "none", only.sig = TRUE,
                      cutoff = ifelse(adj.method == "none", 0.01, 0.05)) {
 
-    if(class(x) != "cepa.all") {
+    if(!inherits(x, "cepa.all")) {
         stop("x should be cepa.all object.\n")
     }
     
@@ -826,7 +826,7 @@ reedge = function(x1, y1, x2, y2, r1, r2) {
 }
 
 # == title
-#   print the cepa object
+# print the cepa object
 #
 # == param
 # -x   a `cepa` object

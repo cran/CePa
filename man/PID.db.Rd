@@ -54,14 +54,6 @@ A list containing four component:
 Each pathway catalogue is a \code{pathway.catalogue} class object. Each pathway
 catalogue can be used directly in \code{\link{cepa.all}} and \code{\link{cepa}}
 }
-\section{Source}{
-\url{ftp://ftp1.nci.nih.gov/pub/PID/XML/NCI-Nature_Curated.xml.gz}
-
-\url{ftp://ftp1.nci.nih.gov/pub/PID/XML/BioCarta.xml.gz}
-
-\url{ftp://ftp1.nci.nih.gov/pub/PID/XML/Reactome.xml.gz}
-
-\url{ftp://ftp1.nci.nih.gov/pub/PID/XML/KEGG.xml.gz}}
 \examples{
 data(PID.db)
 names(PID.db)

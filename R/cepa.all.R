@@ -195,11 +195,11 @@ cepa = function(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, pathway = N
 }
 
 is.ora = function(x) {
-    return(class(x) == "cepa.all" && x[[1]][[1]]$framework == "ora")
+    return(inherits(x, "cepa.all") && inherits(x[[1]][[1]]$framework, "ora"))
 }
 
 is.gsa = function(x) {
-    return(class(x) == "cepa.all" && x[[1]][[1]]$framework == "gsa.univariate")
+    return(inherits(x, "cepa.all") && inherits(x[[1]][[1]]$framework, "gsa.univariate"))
 }
 
 

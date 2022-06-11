@@ -18,8 +18,7 @@
 # for pathways can be visualized interactively (by using Cytoscape Web, in which 
 # you can drag the network, zoom in and zoom out the network). To load Flash Player
 # successful in you browser, you may need to set the Flash security settings on your
-# machine. See http://cytoscapeweb.cytoscape.org/tutorial and change the settings
-# via http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html .
+# machine. 
 #  
 # The report would locate at the current working directory. View the report
 # by clicking ``index.html`` in the report directory.

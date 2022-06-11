@@ -71,7 +71,7 @@ cepa.ora.all = function(dif, pc, bk = NULL, cen = default.centralities,
         }
     }
     
-    if(class(pc) != "pathway.catalogue") {
+    if(!inherits(pc, "pathway.catalogue")) {
         stop("pc argument should be a pathway.catalogue object.")
     }
     
@@ -187,7 +187,7 @@ cepa.ora = function(dif, pc, bk = NULL, pathway = NULL, id = NULL, cen = "equal.
                 stop("if pathway is a matrix or data frame, it should be 2 dimension and the number of columns is 2.\n")
             }
             pathway = generate.pathway(pathway)    # generate an igraph object
-        } else if(class(pathway) != "igraph") {    # it should be an igraph object
+        } else if(!inherits(pathway, "igraph")) {    # it should be an igraph object
             stop("Since pathway is not formatted as edge list, it should be an igraph object.")
         }
     } else if(! is.null(id)) {  # if the pathway is not specified, but the pathway ID is available

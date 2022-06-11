@@ -25,36 +25,6 @@ cepa.all(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, cen = default.cent
   \item{iter}{number of simulations}
 
 }
-\section{Item}{
-cen.name
-}
-\section{Code}{
-cen
-}
-\section{Nlevel}{
-node level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs". Also self-defined functions are allowed, see \code{\link{cepa.univariate.all}} for detail.
-}
-\section{Plevel}{
-pathway level transformation, should be one of "max", "min", "median", "sum", "mean", "rank". Also, self-defined functions are allowed, see \code{\link{cepa.univariate.all}} for detail.
-}
-\section{Iter}{
-number of simulations
-}
-\section{Item}{
-cen.name
-}
-\section{Code}{
-cen
-}
-\section{Nlevel}{
-node level transformation, should be one of "tvalue", "tvalue_sq", "tvalue_abs". Also self-defined functions are allowed, see \code{\link{cepa.univariate.all}} for detail.
-}
-\section{Plevel}{
-pathway level transformation, should be one of "max", "min", "median", "sum", "mean", "rank". Also, self-defined functions are allowed, see \code{\link{cepa.univariate.all}} for detail.
-}
-\section{Iter}{
-number of simulations
-}
 \details{
 All the calculation can be achieved by this function. The function is wrapper of 
 both ORA extension and GSA extension. It chooses corresponding procedure according 
