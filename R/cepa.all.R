@@ -109,7 +109,7 @@ cepa.all = function(dif = NULL, bk = NULL, mat = NULL, label = NULL, pc, cen = d
 # -mat expression matrix in which rows are genes and columns are samples
 # -label a `sampleLabel` object identify the design of the microarray experiment
 # -pc a ``pathway.catalogue`` object storing information of pathways
-# -pathway an `igraph::igraphtest` object or edge list
+# -pathway an `igraph::igraph` object or edge list
 # -id identify which pathway should be analysis in the pathway catalogue
 # -cen centrality measuments, it can ce a string, or function has been quote
 # -cen.name centrality measurement names. This argument should be set if the ``cen`` is a function.

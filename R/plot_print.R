@@ -640,7 +640,7 @@ plotGraph = function(x, node.name = NULL, node.type = NULL, draw = TRUE,
     
     layout(cbind(1:2, 3:4), heights = c(9,cm(1)), widths = c(9, cm(0)))
     if(tool == "igraph") {
-        plot.igraph2(pathway, layout.method=layout.method)
+        plot_igraph2(pathway, layout.method=layout.method)
     } else if(tool == "Rgraphviz") {
         ra = plotByRGraphviz(pathway)
     }
@@ -714,7 +714,7 @@ plotGraph = function(x, node.name = NULL, node.type = NULL, draw = TRUE,
     }
 }
 
-plot.igraph2 = function(g, layout.method = layout.random) {
+plot_igraph2 = function(g, layout.method = layout.random, ...) {
     
     v.color = V(g)$color
     v.shape = V(g)$shape

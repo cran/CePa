@@ -36,7 +36,7 @@ There is also another popular method qvalue to adjust p-values. Turn to \code{\l
 to find out how to use qvalue.
 }
 \section{Source}{
-\url{http://cytoscapeweb.cytoscape.org/}}
+\url{https://cytoscapeweb.cytoscape.org/}}
 \author{
 Zuguang Gu <z.gu@dkfz.de>
 }

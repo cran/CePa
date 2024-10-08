@@ -21,9 +21,18 @@ spread(graph, mode = c("all", "in", "out"),
 \details{
 The spread centrality measures how wide the node can send or receive the information in the network.
 Like the water wave, the effect would be weakened with the increase of the distance to other nodes.
+
+If the weaken function is defined as \code{1/x}, then the spread centrality is calculated as
+\code{sum(1/d(w, v))} where \code{d(w, v)} is the length of the shortest path of node \code{w} and node \code{v}.
+}
+\author{
+Zuguang Gu <z.gu@dkfz.de>
+}
+\seealso{
+\code{\link{reach}}, \code{\link{radiality}}
 }
 \examples{
-# There is no example
-NULL
-
+require(igraph)
+pathway = barabasi.game(200)
+spread(pathway)
 }

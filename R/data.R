@@ -24,8 +24,6 @@
 #
 # == details
 # The pathway data is parsed from XML format file provided by PID FTP site.
-# The perl code for parsing pathway data can be found at author's website
-# (http://mcube.nju.edu.cn/jwang/lab/soft/cepa/index.html ).
 #
 # There are four pathway catalogues which are NCI_Nature, BioCarta, KEGG
 # and Reactome.

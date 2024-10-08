@@ -32,7 +32,9 @@ export("sampleLabel")
 export("set.pathway.catalogue")
 export("spread")
 
-import(igraph)
+importFrom(igraph, degree, vcount, graph.edgelist, get.vertex.attribute, layout.random,
+    V, E, get.edgelist, ecount, get.adjacency, "E<-", "V<-", layout.reingold.tilford,
+    shortest.paths, diameter, write.graph, betweenness)
 importFrom("Rgraphviz", "layoutGraph", "renderGraph")
 importFrom("grDevices", "cm", "col2rgb", "dev.off", "png", "rgb")
 importFrom("graph", "nodeRenderInfo<-")

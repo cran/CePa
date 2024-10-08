@@ -131,7 +131,7 @@ cepa.ora.all = function(dif, pc, bk = NULL, cen = default.centralities,
 # -dif differential gene list
 # -pc a ``pathway.catalogue`` class object
 # -bk background gene list. If background gene list are not specified, use whole human genes
-# -pathway `igraph::igraphtest` object or edge list
+# -pathway `igraph::igraph` object or edge list
 # -id identify which pathway in the catalogue
 # -cen centrality measuments, it can ce a string, function, or function that has been quoted
 # -cen.name centrality measurement names. This argument should be set if the ``cen`` is a function.

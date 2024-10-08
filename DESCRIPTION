@@ -1,8 +1,8 @@
 Package: CePa
 Type: Package
 Title: Centrality-Based Pathway Enrichment
-Version: 0.8.0
-Date: 2022-06-10
+Version: 0.8.1
+Date: 2024-10-07
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 3.6.0)
@@ -23,8 +23,8 @@ LazyLoad: yes
 URL: https://github.com/jokergoo/CePa
 License: GPL (>= 2)
 NeedsCompilation: no
-Packaged: 2022-06-11 11:59:04 UTC; guz
+Packaged: 2024-10-08 09:43:06 UTC; guz
 Author: Zuguang Gu [aut, cre] (<https://orcid.org/0000-0002-7395-8709>)
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Repository: CRAN
-Date/Publication: 2022-06-11 21:30:06 UTC
+Date/Publication: 2024-10-08 10:10:27 UTC

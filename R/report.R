@@ -27,7 +27,7 @@
 # to find out how to use qvalue.
 #
 # == source
-# http://cytoscapeweb.cytoscape.org/
+# https://cytoscapeweb.cytoscape.org/
 #
 # == author
 # Zuguang Gu <z.gu@dkfz.de>
